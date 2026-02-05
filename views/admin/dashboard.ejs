@@ -1,0 +1,64 @@
+<%- include('../partials/admin-header') %>
+
+<div class="container my-5">
+    <h2>Admin Dashboard</h2>
+    
+    <div class="row mt-4">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5>Total Reports</h5>
+                    <h2><%= stats.totalReports %></h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h5>Pending</h5>
+                    <h2><%= stats.pendingReports %></h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5>Assigned</h5>
+                    <h2><%= stats.assignedReports %></h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5>Cleaned</h5>
+                    <h2><%= stats.cleanedReports %></h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Quick Actions</h5>
+                    <a href="/admin/reports" class="btn btn-primary me-2">Manage Reports</a>
+                    <a href="/admin/teams" class="btn btn-success me-2">Manage Teams</a>
+                    <a href="/admin/reports-download" class="btn btn-info">Download Reports</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Teams</h5>
+                    <p>Total Teams: <strong><%= stats.totalTeams %></strong></p>
+                    <a href="/admin/teams" class="btn btn-outline-primary">View Teams</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

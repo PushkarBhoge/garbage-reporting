@@ -1,0 +1,373 @@
+/* Custom styles for Garbage Reporting System */
+
+html, body {
+    height: 100%;
+    overflow-x: hidden;
+}
+
+/* Hide scrollbar for webkit browsers */
+body::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+body {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+body {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    flex: 1;
+}
+
+.hero-section {
+    background: linear-gradient(135deg, #28a745, #20c997);
+}
+
+.card {
+    transition: transform 0.2s;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.btn {
+    border-radius: 25px;
+    padding: 8px 20px;
+}
+
+.table img {
+    border-radius: 8px;
+}
+
+.badge {
+    font-size: 0.8rem;
+}
+
+.modal-content {
+    border-radius: 15px;
+}
+
+.form-control, .form-select {
+    border-radius: 10px;
+}
+
+.alert {
+    border-radius: 10px;
+}
+
+/* Status colors */
+.bg-pending { background-color: #ffc107 !important; }
+.bg-assigned { background-color: #17a2b8 !important; }
+.bg-cleaned { background-color: #28a745 !important; }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 2rem 0 !important;
+    }
+    
+    .hero-section h1 {
+        font-size: 1.8rem;
+    }
+    
+    .hero-section .lead {
+        font-size: 1rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.85rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .btn {
+        padding: 6px 16px;
+        font-size: 0.9rem;
+    }
+    
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+    
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+    
+    .container {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-section h1 {
+        font-size: 1.5rem;
+    }
+    
+    .card-header h3 {
+        font-size: 1.2rem;
+    }
+    
+    .table-responsive table {
+        font-size: 0.8rem;
+    }
+    
+    .btn-sm {
+        padding: 4px 8px;
+        font-size: 0.8rem;
+    }
+    
+    .position-absolute.top-0.end-0 {
+        top: 5px !important;
+        right: 5px !important;
+    }
+    
+    .input-group .btn {
+        padding: 6px 12px;
+    }
+    
+    .btn {
+        margin: 5px 0;
+    }
+    
+    .hero-section .btn {
+        margin: 10px 5px;
+        display: block;
+        width: 100%;
+    }
+}
+
+/* Testimonials section */
+.testimonials-section {
+    background-color: #f8f9fa;
+}
+
+.testimonials-section .card {
+    transition: transform 0.3s ease;
+}
+
+.testimonials-section .card:hover {
+    transform: translateY(-5px);
+}
+
+/* Dark theme styles */
+[data-theme="dark"] body {
+    background-color: #1a1a1a !important;
+    color: #e0e0e0 !important;
+}
+
+/* Exclude admin dashboard cards from dark mode color changes */
+[data-theme="dark"] body:not(.admin-page) .bg-primary,
+[data-theme="dark"] .admin-page .bg-primary {
+    background-color: #0a58ca !important;
+}
+
+[data-theme="dark"] body:not(.admin-page) .bg-warning,
+[data-theme="dark"] .admin-page .bg-warning {
+    background-color: #ffca2c !important;
+}
+
+[data-theme="dark"] body:not(.admin-page) .bg-info,
+[data-theme="dark"] .admin-page .bg-info {
+    background-color: #0aa2c0 !important;
+}
+
+[data-theme="dark"] body:not(.admin-page) .bg-success,
+[data-theme="dark"] .admin-page .bg-success {
+    background-color: #146c43 !important;
+}
+
+[data-theme="dark"] .navbar-dark {
+    background-color: #0d1117 !important;
+}
+
+[data-theme="dark"] .bg-success {
+    background-color: #198754 !important;
+}
+
+[data-theme="dark"] .hero-section {
+    background: linear-gradient(135deg, #1a5928, #0f6b5c) !important;
+}
+
+[data-theme="dark"] .card {
+    background-color: #2d3748 !important;
+    color: #e0e0e0 !important;
+    border: 1px solid #4a5568 !important;
+}
+
+[data-theme="dark"] .bg-light,
+[data-theme="dark"] .testimonials-section {
+    background-color: #1a202c !important;
+}
+
+[data-theme="dark"] .modal-content {
+    background-color: #2d3748 !important;
+    color: #e0e0e0 !important;
+    border: 1px solid #4a5568 !important;
+}
+
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select {
+    background-color: #1a202c !important;
+    border-color: #4a5568 !important;
+    color: #e0e0e0 !important;
+}
+
+[data-theme="dark"] .table {
+    color: #e0e0e0 !important;
+    --bs-table-bg: #2d3748 !important;
+}
+
+[data-theme="dark"] .table-striped > tbody > tr:nth-of-type(odd) > td {
+    background-color: #1a202c !important;
+}
+
+[data-theme="dark"] .table thead th {
+    background-color: #1a202c !important;
+    border-color: #4a5568 !important;
+    color: #e0e0e0 !important;
+}
+
+[data-theme="dark"] .table td,
+[data-theme="dark"] .table th {
+    border-color: #4a5568 !important;
+}
+
+[data-theme="dark"] .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+[data-theme="dark"] .btn-outline-secondary {
+    color: #e0e0e0 !important;
+    border-color: #4a5568 !important;
+}
+
+[data-theme="dark"] .btn-outline-secondary:hover {
+    background-color: #4a5568 !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .text-muted {
+    color: #a0aec0 !important;
+}
+
+[data-theme="dark"] .alert {
+    background-color: #2d3748 !important;
+    border-color: #4a5568 !important;
+    color: #e0e0e0 !important;
+}
+
+[data-theme="dark"] .btn-success {
+    background-color: #198754 !important;
+    border-color: #198754 !important;
+}
+
+[data-theme="dark"] .btn-primary {
+    background-color: #0d6efd !important;
+    border-color: #0d6efd !important;
+}
+
+[data-theme="dark"] .btn-warning {
+    background-color: #ffc107 !important;
+    border-color: #ffc107 !important;
+    color: #000 !important;
+}
+
+[data-theme="dark"] .btn-info {
+    background-color: #0dcaf0 !important;
+    border-color: #0dcaf0 !important;
+    color: #000 !important;
+}
+
+[data-theme="dark"] .admin-page h2,
+[data-theme="dark"] .admin-page .table,
+[data-theme="dark"] .admin-page .table td,
+[data-theme="dark"] .admin-page .table th {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .admin-page .list-group-item {
+    background-color: #2d3748 !important;
+    color: #ffffff !important;
+    border-color: #4a5568 !important;
+}
+
+[data-theme="dark"] .admin-page .dropdown-menu {
+    background-color: #2d3748 !important;
+    border-color: #4a5568 !important;
+}
+
+[data-theme="dark"] .admin-page .dropdown-item {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .admin-page .dropdown-item:hover {
+    background-color: #4a5568 !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .navbar-brand {
+    color: #e0e0e0 !important;
+}
+
+[data-theme="dark"] .nav-link {
+    color: #e0e0e0 !important;
+}
+
+[data-theme="dark"] .nav-link:hover {
+    color: #ffffff !important;
+}
+
+#themeToggle {
+    border: none !important;
+    background: none !important;
+    color: white !important;
+    padding: 0.5rem !important;
+    transition: all 0.3s ease;
+}
+
+[data-theme="dark"] #themeToggle {
+    color: #e0e0e0 !important;
+}
+
+[data-theme="dark"] .navbar-dark {
+    background-color: #0d1117 !important;
+}
+
+[data-theme="dark"] .bg-dark {
+    background-color: #0d1117 !important;
+}
+
+/* Loading spinner */
+.spinner {
+    display: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

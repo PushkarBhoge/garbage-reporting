@@ -1,0 +1,107 @@
+<%- include('../partials/header') %>
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Report Garbage</h3>
+                </div>
+                <div class="card-body">
+                    <form action="/report" method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="beforeImage" class="form-label">Upload Garbage Image *</label>
+                            <div class="input-group">
+                                <input type="file" class="form-control" id="beforeImage" name="beforeImage" accept="image/*" required onchange="showPreviewIcon(this)">
+                                <button type="button" class="btn btn-outline-secondary" id="previewBtn" style="display: none;" onclick="previewImage('beforeImage')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="area" class="form-label">Area/Street *</label>
+                                    <input type="text" class="form-control" id="area" name="area" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="landmark" class="form-label">Landmark *</label>
+                                    <input type="text" class="form-control" id="landmark" name="landmark" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="city" class="form-label">City *</label>
+                                    <input type="text" class="form-control" id="city" name="city" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="pincode" class="form-label">Pincode *</label>
+                                    <input type="text" class="form-control" id="pincode" name="pincode" pattern="[0-9]{6}" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description *</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-success">Submit Report</button>
+                        <a href="/" class="btn btn-secondary">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showPreviewIcon(input) {
+    const btn = document.getElementById('previewBtn');
+    if (input.files && input.files[0]) {
+        btn.style.display = 'block';
+    } else {
+        btn.style.display = 'none';
+    }
+}
+
+function previewImage(inputId) {
+    const input = document.getElementById(inputId);
+    if (input && input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const modalHtml = `
+                <div class="modal fade" id="tempModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Image Preview</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <img src="${e.target.result}" class="img-fluid" alt="Preview">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            const modalElement = document.getElementById('tempModal');
+            const bsModal = new bootstrap.Modal(modalElement);
+            bsModal.show();
+            modalElement.addEventListener('hidden.bs.modal', () => modalElement.remove());
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
+
+<%- include('../partials/footer') %>

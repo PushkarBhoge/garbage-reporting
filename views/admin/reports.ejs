@@ -1,0 +1,174 @@
+<%- include('../partials/admin-header') %>
+
+<div class="container my-5">
+    <h2>Manage Reports</h2>
+    
+    <% if (success) { %>
+        <div class="alert alert-success">Report updated successfully!</div>
+    <% } %>
+    
+    <% if (reports.length === 0) { %>
+        <div class="alert alert-info">No reports found.</div>
+    <% } else { %>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Location</th>
+                        <th>Status</th>
+                        <th>Team</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% reports.forEach(report => { %>
+                        <tr>
+                            <td>
+                                <img src="<%= report.beforeImage.url %>" alt="Before" style="width: 60px; height: 60px; object-fit: cover; cursor: pointer;" class="rounded" onclick="viewImage('<%= report.beforeImage.url %>')">
+                            </td>
+                            <td>
+                                <strong><%= report.location.area %></strong><br>
+                                <%= report.location.city %> - <%= report.location.pincode %>
+                            </td>
+                            <td>
+                                <span class="badge bg-<%= report.status === 'Pending' ? 'warning' : report.status === 'Assigned' ? 'info' : 'success' %>">
+                                    <%= report.status %>
+                                </span>
+                            </td>
+                            <td>
+                                <%= report.assignedTeam ? report.assignedTeam.name : 'Not Assigned' %>
+                            </td>
+                            <td><%= new Date(report.createdAt).toLocaleDateString() %></td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#updateModal<%= report._id %>">
+                                    Update
+                                </button>
+                            </td>
+                        </tr>
+                        
+                        <!-- Update Modal -->
+                        <div class="modal fade" id="updateModal<%= report._id %>" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <form action="/admin/reports/<%= report._id %>" method="POST" enctype="multipart/form-data">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Update Report</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="mb-3">
+                                                <label class="form-label">Status</label>
+                                                <select name="status" class="form-select" onchange="toggleFields(this, '<%= report._id %>')">
+                                                    <option value="Pending" <%= report.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                                                    <option value="Assigned" <%= report.status === 'Assigned' ? 'selected' : '' %>>Assigned</option>
+                                                    <option value="Cleaned" <%= report.status === 'Cleaned' ? 'selected' : '' %>>Cleaned</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3" id="teamField<%= report._id %>" style="display: <%= report.status === 'Assigned' || report.status === 'Cleaned' ? 'block' : 'none' %>">
+                                                <label class="form-label">Assign Team</label>
+                                                <select name="assignedTeam" class="form-select">
+                                                    <option value="">Select Team</option>
+                                                    <% teams.forEach(team => { %>
+                                                        <option value="<%= team._id %>" <%= report.assignedTeam && report.assignedTeam._id.toString() === team._id.toString() ? 'selected' : '' %>>
+                                                            <%= team.name %>
+                                                        </option>
+                                                    <% }) %>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3" id="afterImageField<%= report._id %>" style="display: <%= report.status === 'Cleaned' ? 'block' : 'none' %>">
+                                                <label class="form-label">After Cleaning Image</label>
+                                                <div class="input-group">
+                                                    <input type="file" name="afterImage" id="afterImage<%= report._id %>" class="form-control" accept="image/*" onchange="showPreviewIcon(this, '<%= report._id %>')">
+                                                    <button type="button" class="btn btn-outline-secondary" id="afterPreviewBtn<%= report._id %>" style="display: none;" onclick="previewImage('afterImage<%= report._id %>')">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Admin Remarks</label>
+                                                <select name="adminRemarks" class="form-select">
+                                                    <option value="">Select Remark</option>
+                                                    <option value="Done" <%= report.adminRemarks === 'Done' ? 'selected' : '' %>>Done</option>
+                                                    <option value="Ongoing" <%= report.adminRemarks === 'Ongoing' ? 'selected' : '' %>>Ongoing</option>
+                                                    <option value="Delayed" <%= report.adminRemarks === 'Delayed' ? 'selected' : '' %>>Delayed</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-primary">Update</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    <% } %>
+</div>
+
+<!-- Image View Modal -->
+<div class="modal fade" id="imageViewModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">View Image</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" src="" class="img-fluid" alt="Image">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleFields(selectElement, reportId) {
+    const afterImageField = document.getElementById('afterImageField' + reportId);
+    const teamField = document.getElementById('teamField' + reportId);
+    
+    if (selectElement.value === 'Cleaned') {
+        afterImageField.style.display = 'block';
+        teamField.style.display = 'block';
+    } else if (selectElement.value === 'Assigned') {
+        afterImageField.style.display = 'none';
+        teamField.style.display = 'block';
+    } else {
+        afterImageField.style.display = 'none';
+        teamField.style.display = 'none';
+    }
+}
+
+function viewImage(imageUrl) {
+    document.getElementById('modalImage').src = imageUrl;
+    new bootstrap.Modal(document.getElementById('imageViewModal')).show();
+}
+
+function showPreviewIcon(input, reportId = '') {
+    const btnId = reportId ? `afterPreviewBtn${reportId}` : 'previewBtn';
+    const btn = document.getElementById(btnId);
+    if (input.files && input.files[0]) {
+        btn.style.display = 'block';
+    } else {
+        btn.style.display = 'none';
+    }
+}
+
+function previewImage(inputId) {
+    const input = document.getElementById(inputId) || document.querySelector(`input[name="${inputId}"]`);
+    if (input && input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('modalImage').src = e.target.result;
+            new bootstrap.Modal(document.getElementById('imageViewModal')).show();
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
+
+<%- include('../partials/footer') %>

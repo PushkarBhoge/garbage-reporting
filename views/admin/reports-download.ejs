@@ -1,0 +1,132 @@
+<%- include('../partials/admin-header') %>
+
+<div class="container my-5">
+    <h2>Download Cleaning Reports</h2>
+    
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Generate Excel Report</h5>
+                </div>
+                <div class="card-body">
+                    <form id="reportForm">
+                        <div class="mb-3">
+                            <label class="form-label">Report Period</label>
+                            <select class="form-select" id="period" name="period" required>
+                                <option value="">Select Period</option>
+                                <option value="day">Daily Report</option>
+                                <option value="month">Monthly Report</option>
+                                <option value="year">Yearly Report</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Year</label>
+                            <select class="form-select" id="year" name="year" required>
+                                <option value="">Select Year</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3" id="monthField" style="display: none;">
+                            <label class="form-label">Month</label>
+                            <select class="form-select" id="month" name="month">
+                                <option value="">Select Month</option>
+                                <option value="1">January</option>
+                                <option value="2">February</option>
+                                <option value="3">March</option>
+                                <option value="4">April</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">August</option>
+                                <option value="9">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3" id="dayField" style="display: none;">
+                            <label class="form-label">Day</label>
+                            <select class="form-select" id="day" name="day">
+                                <option value="">Select Day</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-download"></i> Download Report
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Populate years
+const yearSelect = document.getElementById('year');
+const currentYear = new Date().getFullYear();
+for (let year = currentYear; year >= currentYear - 10; year--) {
+    yearSelect.innerHTML += `<option value="${year}">${year}</option>`;
+}
+
+// Show/hide fields based on period
+document.getElementById('period').addEventListener('change', function() {
+    const period = this.value;
+    const monthField = document.getElementById('monthField');
+    const dayField = document.getElementById('dayField');
+    
+    if (period === 'day') {
+        monthField.style.display = 'block';
+        dayField.style.display = 'block';
+        document.getElementById('month').required = true;
+        document.getElementById('day').required = true;
+    } else if (period === 'month') {
+        monthField.style.display = 'block';
+        dayField.style.display = 'none';
+        document.getElementById('month').required = true;
+        document.getElementById('day').required = false;
+    } else {
+        monthField.style.display = 'none';
+        dayField.style.display = 'none';
+        document.getElementById('month').required = false;
+        document.getElementById('day').required = false;
+    }
+});
+
+// Populate days based on month/year
+function populateDays() {
+    const year = document.getElementById('year').value;
+    const month = document.getElementById('month').value;
+    const daySelect = document.getElementById('day');
+    
+    if (year && month) {
+        const daysInMonth = new Date(year, month, 0).getDate();
+        daySelect.innerHTML = '<option value="">Select Day</option>';
+        for (let day = 1; day <= daysInMonth; day++) {
+            daySelect.innerHTML += `<option value="${day}">${day}</option>`;
+        }
+    }
+}
+
+document.getElementById('year').addEventListener('change', populateDays);
+document.getElementById('month').addEventListener('change', populateDays);
+
+// Handle form submission
+document.getElementById('reportForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const params = new URLSearchParams();
+    
+    for (let [key, value] of formData.entries()) {
+        if (value) params.append(key, value);
+    }
+    
+    window.location.href = `/admin/download-report?${params.toString()}`;
+});
+</script>
+
+<%- include('../partials/footer') %>

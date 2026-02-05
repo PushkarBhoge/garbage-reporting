@@ -1,0 +1,190 @@
+<%- include('../partials/header') %>
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header text-center bg-success text-white">
+                    <h3><i class="fas fa-heart"></i> Support Our Clean City Initiative</h3>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <p class="lead">Help us keep our city clean by supporting our garbage cleanup efforts</p>
+                        <p>Your donation helps fund cleanup operations, equipment, and team resources.</p>
+                    </div>
+                    
+                    <form id="donationForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="currency" class="form-label">Currency</label>
+                                    <select class="form-select" id="currency" name="currency" onchange="updateCurrency()">
+                                        <option value="INR" data-symbol="₹">India - Rupee (₹)</option>
+                                        <option value="USD" data-symbol="$">America - Dollar ($)</option>
+                                        <option value="EUR" data-symbol="€">Europe - Euro (€)</option>
+                                        <option value="CNY" data-symbol="¥">China - Yuan (¥)</option>
+                                        <option value="JPY" data-symbol="¥">Japan - Yen (¥)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="amount" class="form-label">Donation Amount</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text" id="currencySymbol">₹</span>
+                                        <input type="number" class="form-control" id="amount" name="amount" placeholder="Enter amount" min="1" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3" id="conversionInfo" style="display: none;">
+                            <div class="alert alert-info">
+                                <strong>Conversion:</strong> <span id="conversionText"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Quick Amount Selection</label>
+                            <div class="row">
+                                <div class="col-4 col-md-2 mb-2">
+                                    <button type="button" class="btn btn-outline-success w-100" onclick="setAmount(100)">
+                                        <span id="quick1">₹100</span>
+                                    </button>
+                                </div>
+                                <div class="col-4 col-md-2 mb-2">
+                                    <button type="button" class="btn btn-outline-success w-100" onclick="setAmount(500)">
+                                        <span id="quick2">₹500</span>
+                                    </button>
+                                </div>
+                                <div class="col-4 col-md-2 mb-2">
+                                    <button type="button" class="btn btn-outline-success w-100" onclick="setAmount(1000)">
+                                        <span id="quick3">₹1000</span>
+                                    </button>
+                                </div>
+                                <div class="col-4 col-md-2 mb-2">
+                                    <button type="button" class="btn btn-outline-success w-100" onclick="setAmount(2000)">
+                                        <span id="quick4">₹2000</span>
+                                    </button>
+                                </div>
+                                <div class="col-4 col-md-2 mb-2">
+                                    <button type="button" class="btn btn-outline-success w-100" onclick="setAmount(5000)">
+                                        <span id="quick5">₹5000</span>
+                                    </button>
+                                </div>
+                                <div class="col-4 col-md-2 mb-2">
+                                    <button type="button" class="btn btn-outline-success w-100" onclick="setAmount(10000)">
+                                        <span id="quick6">₹10000</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="donorName" class="form-label">Your Name (Optional)</label>
+                            <input type="text" class="form-control" id="donorName" name="donorName" placeholder="Enter your name">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Message (Optional)</label>
+                            <textarea class="form-control" id="message" name="message" rows="3" placeholder="Leave a message of support"></textarea>
+                        </div>
+                        
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-heart"></i> Donate Now
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const exchangeRates = {};
+const baseCurrency = 'INR';
+
+// Currency symbols mapping
+const currencySymbols = {
+    'INR': '₹',
+    'USD': '$',
+    'EUR': '€',
+    'CNY': '¥',
+    'JPY': '¥'
+};
+
+// Base amounts in INR for quick selection
+const baseAmounts = [100, 500, 1000, 2000, 5000, 10000];
+
+async function fetchExchangeRates() {
+    try {
+        const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${baseCurrency}`);
+        const data = await response.json();
+        Object.assign(exchangeRates, data.rates);
+    } catch (error) {
+        console.error('Failed to fetch exchange rates:', error);
+    }
+}
+
+function updateCurrency() {
+    const currencySelect = document.getElementById('currency');
+    const selectedCurrency = currencySelect.value;
+    const symbol = currencySymbols[selectedCurrency];
+    
+    // Update currency symbol
+    document.getElementById('currencySymbol').textContent = symbol;
+    
+    // Update quick amount buttons
+    baseAmounts.forEach((amount, index) => {
+        const convertedAmount = selectedCurrency === baseCurrency ? 
+            amount : 
+            Math.round(amount / (exchangeRates[selectedCurrency] || 1));
+        
+        document.getElementById(`quick${index + 1}`).textContent = `${symbol}${convertedAmount}`;
+    });
+    
+    // Update conversion info if amount is entered
+    const amountInput = document.getElementById('amount');
+    if (amountInput.value) {
+        showConversion();
+    }
+}
+
+function setAmount(baseAmount) {
+    const selectedCurrency = document.getElementById('currency').value;
+    const convertedAmount = selectedCurrency === baseCurrency ? 
+        baseAmount : 
+        Math.round(baseAmount / (exchangeRates[selectedCurrency] || 1));
+    
+    document.getElementById('amount').value = convertedAmount;
+    showConversion();
+}
+
+function showConversion() {
+    const selectedCurrency = document.getElementById('currency').value;
+    const amount = document.getElementById('amount').value;
+    
+    if (amount && selectedCurrency !== baseCurrency && exchangeRates[selectedCurrency]) {
+        const inrAmount = Math.round(amount * exchangeRates[selectedCurrency]);
+        document.getElementById('conversionText').textContent = 
+            `${currencySymbols[selectedCurrency]}${amount} = ₹${inrAmount}`;
+        document.getElementById('conversionInfo').style.display = 'block';
+    } else {
+        document.getElementById('conversionInfo').style.display = 'none';
+    }
+}
+
+document.getElementById('amount').addEventListener('input', showConversion);
+
+document.getElementById('donationForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    alert('Thank you for your donation! Payment integration will be implemented.');
+});
+
+// Initialize
+fetchExchangeRates();
+</script>
+
+<%- include('../partials/footer') %>
