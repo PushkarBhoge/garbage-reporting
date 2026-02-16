@@ -1,5 +1,15 @@
 /* Custom styles for Garbage Reporting System */
 
+/* Page fade-in animation */
+body {
+    opacity: 0;
+    animation: fadeIn 0.1s ease-in forwards;
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+
 html, body {
     height: 100%;
     overflow-x: hidden;
@@ -28,47 +38,143 @@ body {
 
 .hero-section {
     background: linear-gradient(135deg, #28a745, #20c997);
+    animation: slideDown 0.8s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .card {
-    transition: transform 0.2s;
+    transition: all 0.3s ease;
     border: none;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+.table img {
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+.table img:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.badge {
+    font-size: 0.8rem;
+    transition: all 0.3s ease;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.badge:hover {
+    transform: scale(1.1);
 }
 
 .navbar-brand {
     font-weight: bold;
     font-size: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.navbar-brand:hover {
+    transform: scale(1.05);
+}
+
+.nav-link {
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav-link:hover {
+    transform: translateY(-2px);
+}
+
+.nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 2px;
+    background-color: currentColor;
+    animation: expandWidth 0.3s ease-out;
+}
+
+@keyframes expandWidth {
+    from { width: 0; }
+    to { width: 60%; }
 }
 
 .btn {
     border-radius: 25px;
     padding: 8px 20px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
-.table img {
-    border-radius: 8px;
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
-.badge {
-    font-size: 0.8rem;
-}
-
-.modal-content {
-    border-radius: 15px;
+.btn:active {
+    transform: translateY(0);
 }
 
 .form-control, .form-select {
     border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+.modal-content {
+    border-radius: 15px;
+    animation: zoomIn 0.3s ease-out;
+}
+
+@keyframes zoomIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 .alert {
     border-radius: 10px;
+    animation: slideInRight 0.5s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 /* Status colors */
@@ -158,14 +264,38 @@ body {
 /* Testimonials section */
 .testimonials-section {
     background-color: #f8f9fa;
+    animation: fadeIn 1s ease-out;
 }
 
 .testimonials-section .card {
-    transition: transform 0.3s ease;
+    transition: all 0.4s ease;
 }
 
 .testimonials-section .card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-10px) rotate(1deg);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+}
+
+/* Stat cards animation */
+.stat-card {
+    animation: bounceIn 0.8s ease-out;
+}
+
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    70% {
+        transform: scale(0.9);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
 /* Dark theme styles */
@@ -342,6 +472,14 @@ body {
     color: white !important;
     padding: 0.5rem !important;
     transition: all 0.3s ease;
+}
+
+#themeToggle:hover {
+    transform: rotate(20deg) scale(1.2);
+}
+
+#themeToggle:active {
+    transform: rotate(360deg) scale(1.1);
 }
 
 [data-theme="dark"] #themeToggle {

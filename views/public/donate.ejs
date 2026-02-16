@@ -133,10 +133,8 @@ function updateCurrency() {
     const selectedCurrency = currencySelect.value;
     const symbol = currencySymbols[selectedCurrency];
     
-    // Update currency symbol
     document.getElementById('currencySymbol').textContent = symbol;
     
-    // Update quick amount buttons
     baseAmounts.forEach((amount, index) => {
         const convertedAmount = selectedCurrency === baseCurrency ? 
             amount : 
@@ -145,7 +143,6 @@ function updateCurrency() {
         document.getElementById(`quick${index + 1}`).textContent = `${symbol}${convertedAmount}`;
     });
     
-    // Update conversion info if amount is entered
     const amountInput = document.getElementById('amount');
     if (amountInput.value) {
         showConversion();
@@ -183,7 +180,6 @@ document.getElementById('donationForm').addEventListener('submit', function(e) {
     alert('Thank you for your donation! Payment integration will be implemented.');
 });
 
-// Initialize
 fetchExchangeRates();
 </script>
 

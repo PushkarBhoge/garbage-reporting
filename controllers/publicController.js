@@ -58,6 +58,11 @@ const publicController = {
   // Donation page
   getDonate: (req, res) => {
     res.render('public/donate', { title: 'Donate' });
+  },
+
+  // Our Work page
+  getOurWork: (req, res) => {
+    res.render('public/our-work', { title: 'Our Work' });
   }
 };
 

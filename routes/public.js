@@ -9,5 +9,6 @@ router.get('/report', publicController.getReportForm);
 router.post('/report', upload.single('beforeImage'), publicController.submitReport);
 router.get('/reports', publicController.getReports);
 router.get('/donate', publicController.getDonate);
+router.get('/our-work', publicController.getOurWork);
 
 module.exports = router;

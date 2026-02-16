@@ -73,6 +73,36 @@
     </div>
 </div>
 
+<!-- Newsletter Section -->
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center py-4">
+                    <h3 class="mb-3"><i class="fas fa-envelope"></i> Join Our Community</h3>
+                    <p class="mb-4">Stay updated with our latest cleanup drives, environmental tips, and community initiatives</p>
+                    <form id="newsletterForm" class="row g-3 justify-content-center">
+                        <div class="col-md-6">
+                            <input type="email" class="form-control" placeholder="Enter your email" required>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-light w-100">Subscribe</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <%- include('../partials/testimonials') %>
 
 <%- include('../partials/footer') %>
+
+<script>
+document.getElementById('newsletterForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    alert('Thank you for subscribing to our newsletter!');
+    this.reset();
+});
+</script>
