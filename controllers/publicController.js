@@ -1,5 +1,6 @@
 const GarbageReport = require('../models/GarbageReport');
 const { uploadToCloudinary } = require('../config/cloudinary');
+const { translateText } = require('../middleware/language');
 
 const publicController = {
   // Home page
@@ -44,6 +45,17 @@ const publicController = {
   getReports: async (req, res) => {
     try {
       const reports = await GarbageReport.find().sort({ createdAt: -1 });
+      const language = req.session.language || 'en';
+      
+      if (language === 'mr') {
+        for (let report of reports) {
+          report.location.area = await translateText(report.location.area, 'mr');
+          report.location.landmark = await translateText(report.location.landmark, 'mr');
+          report.location.city = await translateText(report.location.city, 'mr');
+          report.description = await translateText(report.description, 'mr');
+        }
+      }
+      
       res.render('public/reports', { 
         title: 'View Reports', 
         reports,

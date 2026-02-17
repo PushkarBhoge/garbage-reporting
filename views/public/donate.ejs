@@ -5,21 +5,21 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header text-center bg-success text-white">
-                    <h3><i class="fas fa-heart"></i> Support Our Clean City Initiative</h3>
+                    <h3><i class="fas fa-heart"></i> <%= t('Support Our Clean City Initiative') %></h3>
                 </div>
                 <div class="card-body">
                     <div class="text-center mb-4">
-                        <p class="lead">Help us keep our city clean by supporting our garbage cleanup efforts</p>
-                        <p>Your donation helps fund cleanup operations, equipment, and team resources.</p>
+                        <p class="lead"><%= t('Help us keep our city clean by supporting our garbage cleanup efforts') %></p>
+                        <p><%= t('Your donation helps fund cleanup operations, equipment, and team resources.') %></p>
                     </div>
                     
                     <form id="donationForm">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="currency" class="form-label">Currency</label>
+                                    <label for="currency" class="form-label"><%= t('Currency') %></label>
                                     <select class="form-select" id="currency" name="currency" onchange="updateCurrency()">
-                                        <option value="INR" data-symbol="₹">India - Rupee (₹)</option>
+                                        <option value="INR" data-symbol="₹"><%= t('India - Rupee (₹)') %></option>
                                         <option value="USD" data-symbol="$">America - Dollar ($)</option>
                                         <option value="EUR" data-symbol="€">Europe - Euro (€)</option>
                                         <option value="CNY" data-symbol="¥">China - Yuan (¥)</option>
@@ -29,10 +29,10 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="amount" class="form-label">Donation Amount</label>
+                                    <label for="amount" class="form-label"><%= t('Donation Amount') %></label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="currencySymbol">₹</span>
-                                        <input type="number" class="form-control" id="amount" name="amount" placeholder="Enter amount" min="1" required>
+                                        <input type="number" class="form-control" id="amount" name="amount" placeholder="<%= t('Enter amount') %>" min="1" required>
                                     </div>
                                 </div>
                             </div>
@@ -45,7 +45,7 @@
                         </div>
                         
                         <div class="mb-3">
-                            <label class="form-label">Quick Amount Selection</label>
+                            <label class="form-label"><%= t('Quick Amount Selection') %></label>
                             <div class="row">
                                 <div class="col-4 col-md-2 mb-2">
                                     <button type="button" class="btn btn-outline-success w-100" onclick="setAmount(100)">
@@ -81,18 +81,18 @@
                         </div>
                         
                         <div class="mb-3">
-                            <label for="donorName" class="form-label">Your Name (Optional)</label>
-                            <input type="text" class="form-control" id="donorName" name="donorName" placeholder="Enter your name">
+                            <label for="donorName" class="form-label"><%= t('Your Name (Optional)') %></label>
+                            <input type="text" class="form-control" id="donorName" name="donorName" placeholder="<%= t('Enter your name') %>">
                         </div>
                         
                         <div class="mb-3">
-                            <label for="message" class="form-label">Message (Optional)</label>
-                            <textarea class="form-control" id="message" name="message" rows="3" placeholder="Leave a message of support"></textarea>
+                            <label for="message" class="form-label"><%= t('Message (Optional)') %></label>
+                            <textarea class="form-control" id="message" name="message" rows="3" placeholder="<%= t('Leave a message of support') %>"></textarea>
                         </div>
                         
                         <div class="text-center">
                             <button type="submit" class="btn btn-success btn-lg">
-                                <i class="fas fa-heart"></i> Donate Now
+                                <i class="fas fa-heart"></i> <%= t('Donate Now') %>
                             </button>
                         </div>
                     </form>

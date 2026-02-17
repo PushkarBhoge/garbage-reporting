@@ -2,9 +2,9 @@
 
 <div class="hero-section bg-success text-white py-5">
     <div class="container text-center">
-        <h1 class="display-4">Keep Your City Clean</h1>
-        <p class="lead">Report garbage issues and help make your community cleaner</p>
-        <a href="/report" class="btn btn-light btn-lg">Report Garbage Now</a>
+        <h1 class="display-4"><%= t('Keep Your City Clean') %></h1>
+        <p class="lead"><%= t('Report garbage issues and help make your community cleaner') %></p>
+        <a href="/report" class="btn btn-light btn-lg"><%= t('Report Garbage Now') %></a>
     </div>
 </div>
 
@@ -13,46 +13,33 @@
         <div class="col-md-4 text-center mb-4">
             <div class="card h-100">
                 <div class="card-body">
-                    <h3>📸 Report</h3>
-                    <p>Take a photo and report garbage in your area with location details</p>
+                    <h3>📸 <%= t('Report') %></h3>
+                    <p><%= t('Take a photo and report garbage in your area with location details') %></p>
                 </div>
             </div>
         </div>
         <div class="col-md-4 text-center mb-4">
             <div class="card h-100">
                 <div class="card-body">
-                    <h3>👥 Assign</h3>
-                    <p>Admin assigns cleaning teams to reported locations</p>
+                    <h3>👥 <%= t('Assign') %></h3>
+                    <p><%= t('Admin assigns cleaning teams to reported locations') %></p>
                 </div>
             </div>
         </div>
         <div class="col-md-4 text-center mb-4">
             <div class="card h-100">
                 <div class="card-body">
-                    <h3>✅ Clean</h3>
-                    <p>Teams clean the area and upload after photos</p>
+                    <h3>✅ <%= t('Clean') %></h3>
+                    <p><%= t('Teams clean the area and upload after photos') %></p>
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- <div class="text-center mt-5">
-        <h2>How It Works</h2>
-        <p class="lead">Simple 3-step process to report and track garbage cleanup</p>
-        <div class="row mt-4">
-            <div class="col-md-6">
-                <a href="/report" class="btn btn-success btn-lg me-3">Report Garbage</a>
-            </div>
-            <div class="col-md-6">
-                <a href="/reports" class="btn btn-outline-success btn-lg">View Reports</a>
-            </div>
-        </div>
-    </div> -->
-
     <div class="text-center mt-5 px-3">
-        <h2>How It Works</h2>
+        <h2><%= t('How It Works') %></h2>
         <p class="lead">
-            Simple 3-step process to report and track garbage cleanup
+            <%= t('Simple 3-step process to report and track garbage cleanup') %>
         </p>
 
         <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-4 mt-4">
@@ -60,13 +47,13 @@
             <a href="/report"
             class="btn btn-success btn-md py-2 px-4"
             style="width: 200px;">
-            Report Garbage
+            <%= t('Report Garbage') %>
             </a>
 
             <a href="/reports"
             class="btn btn-outline-success btn-md py-2 px-4"
             style="width: 200px;">
-            View Reports
+            <%= t('View Reports') %>
             </a>
 
         </div>
@@ -79,14 +66,14 @@
         <div class="col-md-8">
             <div class="card bg-success text-white">
                 <div class="card-body text-center py-4">
-                    <h3 class="mb-3"><i class="fas fa-envelope"></i> Join Our Community</h3>
-                    <p class="mb-4">Stay updated with our latest cleanup drives, environmental tips, and community initiatives</p>
+                    <h3 class="mb-3"><i class="fas fa-envelope"></i> <%= t('Join Our Community') %></h3>
+                    <p class="mb-4"><%= t('Stay updated with our latest cleanup drives, environmental tips, and community initiatives') %></p>
                     <form id="newsletterForm" class="row g-3 justify-content-center">
                         <div class="col-md-6">
-                            <input type="email" class="form-control" placeholder="Enter your email" required>
+                            <input type="email" class="form-control" placeholder="<%= t('Enter your email') %>" required>
                         </div>
                         <div class="col-md-3">
-                            <button type="submit" class="btn btn-light w-100">Subscribe</button>
+                            <button type="submit" class="btn btn-light w-100"><%= t('Subscribe') %></button>
                         </div>
                     </form>
                 </div>

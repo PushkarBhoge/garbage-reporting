@@ -7,6 +7,8 @@ require('dotenv').config();
 const connectDB = require('./config/database');
 const publicRoutes = require('./routes/public');
 const adminRoutes = require('./routes/admin');
+const { languageMiddleware } = require('./middleware/language');
+const { getTranslation } = require('./utils/translations');
 
 const app = express();
 
@@ -33,6 +35,22 @@ app.use(session({
 // View engine setup
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+
+// Language middleware
+app.use(languageMiddleware);
+app.use((req, res, next) => {
+  res.locals.t = (text) => getTranslation(text, req.session.language);
+  next();
+});
+
+// Language switch route
+app.post('/set-language', (req, res) => {
+  const { language } = req.body;
+  if (language === 'en' || language === 'mr') {
+    req.session.language = language;
+  }
+  res.json({ success: true });
+});
 
 // Routes
 app.use('/', publicRoutes);

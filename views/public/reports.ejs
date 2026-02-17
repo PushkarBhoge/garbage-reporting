@@ -1,14 +1,14 @@
 <%- include('../partials/header') %>
 
 <div class="container my-5">
-    <h2>Garbage Reports</h2>
+    <h2><%= t('Garbage Reports') %></h2>
     
     <% if (success) { %>
-        <div class="alert alert-success">Report submitted successfully!</div>
+        <div class="alert alert-success"><%= t('Report submitted successfully!') %></div>
     <% } %>
     
     <% if (reports.length === 0) { %>
-        <div class="alert alert-info">No reports found.</div>
+        <div class="alert alert-info"><%= t('No reports found.') %></div>
     <% } else { %>
         <div class="row">
             <% reports.forEach(report => { %>
@@ -18,25 +18,25 @@
                         <div class="card-body">
                             <h5 class="card-title">
                                 <span class="badge bg-<%= report.status === 'Pending' ? 'warning' : report.status === 'Assigned' ? 'info' : 'success' %>">
-                                    <%= report.status %>
+                                    <%= t(report.status) %>
                                 </span>
                             </h5>
                             <p class="card-text">
-                                <strong>Location:</strong> <%= report.location.area %>, <%= report.location.landmark %><br>
-                                <strong>City:</strong> <%= report.location.city %> - <%= report.location.pincode %><br>
-                                <strong>Description:</strong> <%= report.description %>
+                                <strong><%= t('Location:') %></strong> <%= report.location.area %>, <%= report.location.landmark %><br>
+                                <strong><%= t('City:') %></strong> <%= report.location.city %> - <%= report.location.pincode %><br>
+                                <strong><%= t('Description:') %></strong> <%= report.description %>
                             </p>
-                            <small class="text-muted">Reported on: <%= new Date(report.createdAt).toLocaleDateString() %></small>
+                            <small class="text-muted"><%= t('Reported on:') %> <%= new Date(report.createdAt).toLocaleDateString() %></small>
                             
                             <% if (report.status === 'Cleaned' && report.afterImage) { %>
                                 <hr>
-                                <h6>After Cleaning: 
+                                <h6><%= t('After Cleaning:') %> 
                                     <button type="button" class="btn btn-success btn-sm ms-2" onclick="viewImage('<%= report.afterImage.url %>')">
-                                        <i class="fas fa-eye"></i> View
+                                        <i class="fas fa-eye"></i> <%= t('View') %>
                                     </button>
                                 </h6>
                                 <% if (report.cleanedAt) { %>
-                                    <small class="text-muted">Cleaned on: <%= new Date(report.cleanedAt).toLocaleDateString() %></small>
+                                    <small class="text-muted"><%= t('Cleaned on:') %> <%= new Date(report.cleanedAt).toLocaleDateString() %></small>
                                 <% } %>
                             <% } %>
                         </div>
@@ -52,7 +52,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">View Image</h5>
+                <h5 class="modal-title"><%= t('View Image') %></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body text-center">

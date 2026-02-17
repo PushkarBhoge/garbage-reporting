@@ -1,5 +1,29 @@
 // Main JavaScript for Garbage Reporting System
 
+// Language selector functionality
+function initializeLanguageSelector() {
+    const languageSelector = document.getElementById('languageSelector');
+    if (languageSelector) {
+        languageSelector.addEventListener('change', async function() {
+            const selectedLanguage = this.value;
+            try {
+                const response = await fetch('/set-language', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ language: selectedLanguage })
+                });
+                if (response.ok) {
+                    window.location.reload();
+                }
+            } catch (error) {
+                console.error('Error setting language:', error);
+            }
+        });
+    }
+}
+
 // Theme toggle functionality
 function initializeTheme() {
     const themeToggle = document.getElementById('themeToggle');
@@ -30,9 +54,13 @@ function initializeTheme() {
 
 // Initialize theme when DOM is ready
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeTheme);
+    document.addEventListener('DOMContentLoaded', () => {
+        initializeTheme();
+        initializeLanguageSelector();
+    });
 } else {
     initializeTheme();
+    initializeLanguageSelector();
 }
 
 document.addEventListener('DOMContentLoaded', function() {

@@ -89,6 +89,11 @@ body {
     transition: all 0.3s ease;
 }
 
+.navbar-brand img {
+    margin-top: -10px;
+    margin-bottom: -10px;
+}
+
 .navbar-brand:hover {
     transform: scale(1.05);
 }
@@ -508,4 +513,25 @@ body {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+
+.hero-logo {
+    height: 100px;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+    animation: fadeInScale 1s ease-out;
+}
+
+
+.hero-logo-xl {
+    height: 200px;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+    animation: fadeInScale 1s ease-out;
+}
+
+@media (max-width: 768px) {
+    .hero-logo-xl {
+        height: 130px;
+        margin-bottom: 20px;
+    }
 }

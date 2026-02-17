@@ -5,12 +5,12 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">
-                    <h3>Report Garbage</h3>
+                    <h3><%= t('Report Garbage') %></h3>
                 </div>
                 <div class="card-body">
                     <form action="/report" method="POST" enctype="multipart/form-data">
                         <div class="mb-3">
-                            <label for="beforeImage" class="form-label">Upload Garbage Image *</label>
+                            <label for="beforeImage" class="form-label"><%= t('Upload Garbage Image *') %></label>
                             <div class="input-group">
                                 <input type="file" class="form-control" id="beforeImage" name="beforeImage" accept="image/*" required onchange="showPreviewIcon(this)">
                                 <button type="button" class="btn btn-outline-secondary" id="previewBtn" style="display: none;" onclick="previewImage('beforeImage')">
@@ -22,13 +22,13 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="area" class="form-label">Area/Street *</label>
+                                    <label for="area" class="form-label"><%= t('Area/Street *') %></label>
                                     <input type="text" class="form-control" id="area" name="area" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="landmark" class="form-label">Landmark *</label>
+                                    <label for="landmark" class="form-label"><%= t('Landmark *') %></label>
                                     <input type="text" class="form-control" id="landmark" name="landmark" required>
                                 </div>
                             </div>
@@ -37,25 +37,25 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="city" class="form-label">City *</label>
+                                    <label for="city" class="form-label"><%= t('City *') %></label>
                                     <input type="text" class="form-control" id="city" name="city" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="pincode" class="form-label">Pincode *</label>
+                                    <label for="pincode" class="form-label"><%= t('Pincode *') %></label>
                                     <input type="text" class="form-control" id="pincode" name="pincode" pattern="[0-9]{6}" required>
                                 </div>
                             </div>
                         </div>
                         
                         <div class="mb-3">
-                            <label for="description" class="form-label">Description *</label>
+                            <label for="description" class="form-label"><%= t('Description *') %></label>
                             <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
                         </div>
                         
-                        <button type="submit" class="btn btn-success">Submit Report</button>
-                        <a href="/" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-success"><%= t('Submit Report') %></button>
+                        <a href="/" class="btn btn-secondary"><%= t('Cancel') %></a>
                     </form>
                 </div>
             </div>
@@ -83,7 +83,7 @@ function previewImage(inputId) {
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title">Image Preview</h5>
+                                <h5 class="modal-title"><%= t('Image Preview') %></h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
                             <div class="modal-body text-center">
