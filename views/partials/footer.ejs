@@ -1,6 +1,15 @@
     <footer class="bg-dark text-white text-center py-3 mt-auto">
         <div class="container">
-            <p class="mb-0">&copy; 2026 <%= t('Swachh Sena') %>. <%= t('All rights reserved.') %></p>
+            <% 
+            const formatYear = (year) => {
+                if (typeof language !== 'undefined' && language === 'mr') {
+                    const devanagariMap = {'0':'०','1':'१','2':'२','3':'३','4':'४','5':'५','6':'६','7':'७','8':'८','9':'९'};
+                    return year.toString().replace(/[0-9]/g, d => devanagariMap[d]);
+                }
+                return year;
+            };
+            %>
+            <p class="mb-0">&copy; <%= formatYear(2026) %> <%= t('Swachh Sena') %>. <%= t('All rights reserved.') %></p>
         </div>
     </footer>
     

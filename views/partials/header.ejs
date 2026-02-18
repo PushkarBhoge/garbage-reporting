@@ -34,12 +34,23 @@
                         <a class="nav-link <%= title === 'Our Work' ? 'active' : '' %>" href="/our-work"><%= t('Our Work') %></a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link <%= title === 'Create Blog' ? 'active' : '' %>" href="/create-blog"><%= t('Create Blog') %></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <%= title === 'Blogs' ? 'active' : '' %>" href="/blogs"><%= t('Blogs') %></a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link <%= title === 'Donate' ? 'active' : '' %>" href="/donate"><%= t('Donate') %></a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/admin/login"><%= t('Admin Login') %></a>
                     </li>
-                    <li class="nav-item d-flex align-items-center ms-2">
+                    <% if (typeof subscriberEmail !== 'undefined' && subscriberEmail) { %>
+                    <li class="nav-item">
+                        <button class="btn btn-outline-light btn-sm mt-2 mt-lg-0 w-100" id="unsubscribeBtn" data-email="<%= subscriberEmail %>"><%= t('Unsubscribe') %></button>
+                    </li>
+                    <% } %>
+                    <li class="nav-item d-flex align-items-center ms-lg-2 mt-2 mt-lg-0">
                         <select class="form-select form-select-sm" id="languageSelector" style="width: auto; background-color: rgba(255,255,255,0.2); color: white; border-color: white; border-radius: 20px; padding: 5px 15px; font-weight: 500; appearance: none; -webkit-appearance: none; -moz-appearance: none; background-image: none;">
                             <option value="en" <%= language === 'en' ? 'selected' : '' %> style="background-color: #198754; color: white;">English</option>
                             <option value="mr" <%= language === 'mr' ? 'selected' : '' %> style="background-color: #198754; color: white;">मराठी</option>

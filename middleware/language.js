@@ -5,6 +5,7 @@ const languageMiddleware = (req, res, next) => {
     req.session.language = 'en';
   }
   res.locals.language = req.session.language;
+  res.locals.subscriberEmail = req.session.subscriberEmail || null;
   next();
 };
 

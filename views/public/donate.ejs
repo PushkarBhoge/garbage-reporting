@@ -1,5 +1,13 @@
 <%- include('../partials/header') %>
-
+<% 
+const formatTextNumbers = (text) => {
+    if (typeof language !== 'undefined' && language === 'mr') {
+        const devanagariMap = {'0':'०','1':'१','2':'२','3':'३','4':'४','5':'५','6':'६','7':'७','8':'८','9':'९'};
+        return text.replace(/[0-9]/g, d => devanagariMap[d]);
+    }
+    return text;
+};
+%>
 <div class="container my-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -9,8 +17,8 @@
                 </div>
                 <div class="card-body">
                     <div class="text-center mb-4">
-                        <p class="lead"><%= t('Help us keep our city clean by supporting our garbage cleanup efforts') %></p>
-                        <p><%= t('Your donation helps fund cleanup operations, equipment, and team resources.') %></p>
+                        <p class="lead"><%= formatTextNumbers(t('Help us keep our city clean by supporting our garbage cleanup efforts')) %></p>
+                        <p><%= formatTextNumbers(t('Your donation helps fund cleanup operations, equipment, and team resources.')) %></p>
                     </div>
                     
                     <form id="donationForm">
@@ -103,6 +111,15 @@
 </div>
 
 <script>
+const language = '<%= typeof language !== "undefined" ? language : "en" %>';
+const devanagariMap = {'0':'०','1':'१','2':'२','3':'३','4':'४','5':'५','6':'६','7':'७','8':'८','9':'९'};
+const formatNumber = (num) => {
+    if (language === 'mr') {
+        return num.toString().replace(/[0-9]/g, d => devanagariMap[d]);
+    }
+    return num.toString();
+};
+
 const exchangeRates = {};
 const baseCurrency = 'INR';
 
@@ -123,6 +140,7 @@ async function fetchExchangeRates() {
         const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${baseCurrency}`);
         const data = await response.json();
         Object.assign(exchangeRates, data.rates);
+        updateCurrency();
     } catch (error) {
         console.error('Failed to fetch exchange rates:', error);
     }
@@ -140,7 +158,7 @@ function updateCurrency() {
             amount : 
             Math.round(amount / (exchangeRates[selectedCurrency] || 1));
         
-        document.getElementById(`quick${index + 1}`).textContent = `${symbol}${convertedAmount}`;
+        document.getElementById(`quick${index + 1}`).textContent = `${symbol}${formatNumber(convertedAmount)}`;
     });
     
     const amountInput = document.getElementById('amount');
@@ -166,7 +184,7 @@ function showConversion() {
     if (amount && selectedCurrency !== baseCurrency && exchangeRates[selectedCurrency]) {
         const inrAmount = Math.round(amount * exchangeRates[selectedCurrency]);
         document.getElementById('conversionText').textContent = 
-            `${currencySymbols[selectedCurrency]}${amount} = ₹${inrAmount}`;
+            `${currencySymbols[selectedCurrency]}${formatNumber(amount)} = ₹${formatNumber(inrAmount)}`;
         document.getElementById('conversionInfo').style.display = 'block';
     } else {
         document.getElementById('conversionInfo').style.display = 'none';
@@ -181,6 +199,7 @@ document.getElementById('donationForm').addEventListener('submit', function(e) {
 });
 
 fetchExchangeRates();
+updateCurrency();
 </script>
 
 <%- include('../partials/footer') %>

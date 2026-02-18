@@ -1,5 +1,7 @@
 const GarbageReport = require('../models/GarbageReport');
+const Blog = require('../models/Blog');
 const Team = require('../models/Team');
+const Newsletter = require('../models/Newsletter');
 const { uploadToCloudinary } = require('../config/cloudinary');
 
 const adminController = {
@@ -37,10 +39,12 @@ const adminController = {
       const assignedReports = await GarbageReport.countDocuments({ status: 'Assigned' });
       const cleanedReports = await GarbageReport.countDocuments({ status: 'Cleaned' });
       const totalTeams = await Team.countDocuments();
+      const totalBlogs = await Blog.countDocuments();
+      const totalSubscribers = await Newsletter.countDocuments({ status: 'active' });
 
       res.render('admin/dashboard', {
         title: 'Admin Dashboard',
-        stats: { totalReports, pendingReports, assignedReports, cleanedReports, totalTeams }
+        stats: { totalReports, pendingReports, assignedReports, cleanedReports, totalTeams, totalBlogs, totalSubscribers }
       });
     } catch (error) {
       console.error(error);
@@ -244,6 +248,60 @@ const adminController = {
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Failed to generate report' });
+    }
+  },
+
+  // Blogs management
+  getBlogs: async (req, res) => {
+    try {
+      const blogs = await Blog.find().sort({ createdAt: -1 });
+      res.render('admin/blogs', { 
+        title: 'Manage Blogs', 
+        blogs,
+        success: req.query.success 
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Failed to fetch blogs' });
+    }
+  },
+
+  // Delete blog
+  deleteBlog: async (req, res) => {
+    try {
+      const { blogId } = req.params;
+      await Blog.findByIdAndDelete(blogId);
+      res.redirect('/admin/blogs?success=1');
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Failed to delete blog' });
+    }
+  },
+
+  // Newsletter subscribers management
+  getSubscribers: async (req, res) => {
+    try {
+      const subscribers = await Newsletter.find().sort({ subscribedAt: -1 });
+      res.render('admin/subscribers', { 
+        title: 'Newsletter Subscribers', 
+        subscribers,
+        success: req.query.success 
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Failed to fetch subscribers' });
+    }
+  },
+
+  // Delete subscriber
+  deleteSubscriber: async (req, res) => {
+    try {
+      const { subscriberId } = req.params;
+      await Newsletter.findByIdAndDelete(subscriberId);
+      res.redirect('/admin/subscribers?success=1');
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Failed to delete subscriber' });
     }
   }
 };

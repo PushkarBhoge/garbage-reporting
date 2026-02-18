@@ -188,7 +188,7 @@ body {
 .bg-cleaned { background-color: #28a745 !important; }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
+@media (max-width: 991px) {
     .hero-section {
         padding: 2rem 0 !important;
     }
@@ -225,6 +225,28 @@ body {
     .container {
         padding-left: 10px;
         padding-right: 10px;
+    }
+    
+    .nav-link.active::after {
+        display: none;
+    }
+    
+    .navbar-collapse {
+        padding: 15px 0;
+        text-align: center;
+    }
+    
+    .navbar-nav {
+        align-items: center;
+    }
+    
+    .navbar-nav .nav-item {
+        margin: 3px 0;
+    }
+    
+    #unsubscribeBtn {
+        margin: 8px auto;
+        max-width: 200px;
     }
 }
 
@@ -533,5 +555,122 @@ body {
     .hero-logo-xl {
         height: 130px;
         margin-bottom: 20px;
+    }
+}
+
+/* FAQ accordion icons */
+.accordion-button::after {
+    display: none;
+}
+
+.accordion-button i {
+    color: #28a745;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.accordion-button:not(.collapsed) i {
+    transform: rotate(180deg);
+}
+
+/* Toast Notification */
+.toast-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    padding: 18px 24px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    font-weight: 500;
+    z-index: 9999;
+    opacity: 0;
+    transform: translateX(400px);
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.toast-notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.toast-notification i {
+    font-size: 24px;
+}
+
+.toast-success {
+    border-left: 4px solid #28a745;
+    color: #155724;
+}
+
+.toast-success i {
+    color: #28a745;
+}
+
+.toast-error {
+    border-left: 4px solid #dc3545;
+    color: #721c24;
+}
+
+.toast-error i {
+    color: #dc3545;
+}
+
+@media (max-width: 576px) {
+    .toast-notification {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        padding: 15px 18px;
+        font-size: 14px;
+    }
+}
+
+/* Testimonial carousel wave animation */
+.carousel-item .col-md-4:nth-child(1) .card {
+    animation: waveRight 1s ease-out;
+}
+
+.carousel-item .col-md-4:nth-child(2) .card {
+    animation: waveMiddle 1s ease-out;
+}
+
+.carousel-item .col-md-4:nth-child(3) .card {
+    animation: waveLeft 1s ease-out;
+}
+
+@keyframes waveRight {
+    0% {
+        opacity: 0;
+        transform: translate(100px, 50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(0, 0);
+    }
+}
+
+@keyframes waveMiddle {
+    0% {
+        opacity: 0;
+        transform: translate(0, 80px);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(0, 0);
+    }
+}
+
+@keyframes waveLeft {
+    0% {
+        opacity: 0;
+        transform: translate(-100px, 50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(0, 0);
     }
 }

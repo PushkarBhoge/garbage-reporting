@@ -1,5 +1,15 @@
 <%- include('../partials/header') %>
 
+<% 
+const formatTextNumbers = (text) => {
+    if (language === 'mr') {
+        const devanagariMap = {'0':'०','1':'१','2':'२','3':'३','4':'४','5':'५','6':'६','7':'७','8':'८','9':'९'};
+        return text.replace(/[0-9]+/g, match => match.split('').map(d => devanagariMap[d] || d).join(''));
+    }
+    return text;
+};
+%>
+
 <div class="hero-section text-white py-5">
     <div class="container">
         <div class="d-flex align-items-center justify-content-center flex-wrap">
@@ -102,7 +112,7 @@
             <div class="card h-100">
                 <div class="card-body">
                     <h4 class="text-success"><i class="fas fa-recycle"></i> <%= t('Community Recycling Drive') %></h4>
-                    <p><%= t('Organized monthly recycling drives in 25+ neighborhoods, promoting waste segregation and recycling awareness.') %></p>
+                    <p><%= formatTextNumbers(t('Organized monthly recycling drives in 25+ neighborhoods, promoting waste segregation and recycling awareness.')) %></p>
                     <span class="badge bg-success"><%= t('Ongoing') %></span>
                 </div>
             </div>
@@ -111,7 +121,7 @@
             <div class="card h-100">
                 <div class="card-body">
                     <h4 class="text-success"><i class="fas fa-graduation-cap"></i> <%= t('School Awareness Program') %></h4>
-                    <p><%= t('Conducted environmental workshops in 100+ schools, educating 50,000+ students about waste management and sustainability.') %></p>
+                    <p><%= formatTextNumbers(t('Conducted environmental workshops in 100+ schools, educating 50,000+ students about waste management and sustainability.')) %></p>
                     <span class="badge bg-info"><%= t('Completed') %></span>
                 </div>
             </div>
@@ -127,8 +137,8 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="text-success"><%= t('Riverside Park Transformation') %></h5>
-                    <p class="text-muted"><small><i class="fas fa-calendar"></i> March 2024</small></p>
-                    <p><%= t('Transformed a 5-acre dumping ground into a beautiful community park. Removed 50 tons of waste, planted 200 trees, and created recreational spaces for families.') %></p>
+                    <p class="text-muted"><small><i class="fas fa-calendar"></i> <%= new Date('2024-03-01').toLocaleDateString(language === 'mr' ? 'mr-IN' : 'en-US', { year: 'numeric', month: 'long' }) %></small></p>
+                    <p><%= formatTextNumbers(t('Transformed a 5-acre dumping ground into a beautiful community park. Removed 50 tons of waste, planted 200 trees, and created recreational spaces for families.')) %></p>
                 </div>
             </div>
         </div>
@@ -136,8 +146,8 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="text-success"><%= t('Beach Cleanup Marathon') %></h5>
-                    <p class="text-muted"><small><i class="fas fa-calendar"></i> January 2024</small></p>
-                    <p><%= t('Organized a mega beach cleanup with 5,000 volunteers, collecting 15 tons of plastic waste and marine debris from 10 km of coastline.') %></p>
+                    <p class="text-muted"><small><i class="fas fa-calendar"></i> <%= new Date('2024-01-01').toLocaleDateString(language === 'mr' ? 'mr-IN' : 'en-US', { year: 'numeric', month: 'long' }) %></small></p>
+                    <p><%= formatTextNumbers(t('Organized a mega beach cleanup with 5,000 volunteers, collecting 15 tons of plastic waste and marine debris from 10 km of coastline.')) %></p>
                 </div>
             </div>
         </div>
@@ -145,8 +155,8 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="text-success"><%= t('Zero Waste Neighborhood') %></h5>
-                    <p class="text-muted"><small><i class="fas fa-calendar"></i> December 2023</small></p>
-                    <p><%= t('Successfully implemented zero-waste practices in Green Valley community, achieving 95% waste diversion through composting and recycling.') %></p>
+                    <p class="text-muted"><small><i class="fas fa-calendar"></i> <%= new Date('2023-12-01').toLocaleDateString(language === 'mr' ? 'mr-IN' : 'en-US', { year: 'numeric', month: 'long' }) %></small></p>
+                    <p><%= formatTextNumbers(t('Successfully implemented zero-waste practices in Green Valley community, achieving 95% waste diversion through composting and recycling.')) %></p>
                 </div>
             </div>
         </div>
@@ -154,8 +164,8 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="text-success"><%= t('Corporate Partnership Initiative') %></h5>
-                    <p class="text-muted"><small><i class="fas fa-calendar"></i> November 2023</small></p>
-                    <p><%= t('Partnered with 20+ corporations for CSR-driven cleanup drives, engaging 3,000+ employees in environmental conservation activities.') %></p>
+                    <p class="text-muted"><small><i class="fas fa-calendar"></i> <%= new Date('2023-11-01').toLocaleDateString(language === 'mr' ? 'mr-IN' : 'en-US', { year: 'numeric', month: 'long' }) %></small></p>
+                    <p><%= formatTextNumbers(t('Partnered with 20+ corporations for CSR-driven cleanup drives, engaging 3,000+ employees in environmental conservation activities.')) %></p>
                 </div>
             </div>
         </div>
@@ -170,11 +180,11 @@
             <div class="card">
                 <div class="card-body">
                     <ul class="list-unstyled">
-                        <li class="mb-3"><i class="fas fa-trophy text-warning"></i> <strong><%= t('Best Environmental NGO Award 2023') %></strong> - <%= t('National Green Council') %></li>
-                        <li class="mb-3"><i class="fas fa-trophy text-warning"></i> <strong><%= t('Innovation in Waste Management 2023') %></strong> - <%= t('Ministry of Environment') %></li>
-                        <li class="mb-3"><i class="fas fa-trophy text-warning"></i> <strong><%= t('Community Impact Award 2022') %></strong> - <%= t('City Municipal Corporation') %></li>
-                        <li class="mb-3"><i class="fas fa-trophy text-warning"></i> <strong><%= t('Digital India Initiative Recognition 2022') %></strong> - <%= t('Government of India') %></li>
-                        <li class="mb-3"><i class="fas fa-trophy text-warning"></i> <strong><%= t('Youth Engagement Excellence 2021') %></strong> - <%= t('United Nations Environment Programme') %></li>
+                        <li class="mb-3"><i class="fas fa-trophy text-warning"></i> <strong><%= formatTextNumbers(t('Best Environmental NGO Award 2023')) %></strong> - <%= t('National Green Council') %></li>
+                        <li class="mb-3"><i class="fas fa-trophy text-warning"></i> <strong><%= formatTextNumbers(t('Innovation in Waste Management 2023')) %></strong> - <%= t('Ministry of Environment') %></li>
+                        <li class="mb-3"><i class="fas fa-trophy text-warning"></i> <strong><%= formatTextNumbers(t('Community Impact Award 2022')) %></strong> - <%= t('City Municipal Corporation') %></li>
+                        <li class="mb-3"><i class="fas fa-trophy text-warning"></i> <strong><%= formatTextNumbers(t('Digital India Initiative Recognition 2022')) %></strong> - <%= t('Government of India') %></li>
+                        <li class="mb-3"><i class="fas fa-trophy text-warning"></i> <strong><%= formatTextNumbers(t('Youth Engagement Excellence 2021')) %></strong> - <%= t('United Nations Environment Programme') %></li>
                     </ul>
                 </div>
             </div>
@@ -203,13 +213,22 @@ function animateCounter(element) {
     const increment = target / (duration / 16);
     let current = 0;
     
+    const formatNumber = (num) => {
+        const lang = '<%= language %>';
+        if (lang === 'mr') {
+            const devanagariMap = {'0':'०','1':'१','2':'२','3':'३','4':'४','5':'५','6':'६','7':'७','8':'८','9':'९'};
+            return num.toString().replace(/[0-9]/g, d => devanagariMap[d]);
+        }
+        return num.toString();
+    };
+    
     const timer = setInterval(() => {
         current += increment;
         if (current >= target) {
-            element.textContent = target.toLocaleString() + '+';
+            element.textContent = formatNumber(target.toLocaleString()) + '+';
             clearInterval(timer);
         } else {
-            element.textContent = Math.floor(current).toLocaleString();
+            element.textContent = formatNumber(Math.floor(current).toLocaleString());
         }
     }, 16);
 }

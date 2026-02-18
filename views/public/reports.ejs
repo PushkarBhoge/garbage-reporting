@@ -11,7 +11,18 @@
         <div class="alert alert-info"><%= t('No reports found.') %></div>
     <% } else { %>
         <div class="row">
-            <% reports.forEach(report => { %>
+            <% reports.forEach(report => { 
+                const formatDate = (date) => {
+                    return new Date(date).toLocaleDateString(language === 'mr' ? 'mr-IN' : 'en-US', { year: 'numeric', month: 'numeric', day: 'numeric' });
+                };
+                const formatNumber = (num) => {
+                    if (language === 'mr') {
+                        const devanagariMap = {'0':'०','1':'१','2':'२','3':'३','4':'४','5':'५','6':'६','7':'७','8':'८','9':'९'};
+                        return num.toString().replace(/[0-9]/g, d => devanagariMap[d]);
+                    }
+                    return num;
+                };
+            %>
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card">
                         <img src="<%= report.beforeImage.url %>" class="card-img-top" alt="Before Image" style="height: 200px; object-fit: cover;">
@@ -23,10 +34,10 @@
                             </h5>
                             <p class="card-text">
                                 <strong><%= t('Location:') %></strong> <%= report.location.area %>, <%= report.location.landmark %><br>
-                                <strong><%= t('City:') %></strong> <%= report.location.city %> - <%= report.location.pincode %><br>
+                                <strong><%= t('City:') %></strong> <%= report.location.city %> - <%= formatNumber(report.location.pincode) %><br>
                                 <strong><%= t('Description:') %></strong> <%= report.description %>
                             </p>
-                            <small class="text-muted"><%= t('Reported on:') %> <%= new Date(report.createdAt).toLocaleDateString() %></small>
+                            <small class="text-muted"><%= t('Reported on:') %> <%= formatDate(report.createdAt) %></small>
                             
                             <% if (report.status === 'Cleaned' && report.afterImage) { %>
                                 <hr>
@@ -36,7 +47,7 @@
                                     </button>
                                 </h6>
                                 <% if (report.cleanedAt) { %>
-                                    <small class="text-muted"><%= t('Cleaned on:') %> <%= new Date(report.cleanedAt).toLocaleDateString() %></small>
+                                    <small class="text-muted"><%= t('Cleaned on:') %> <%= formatDate(report.cleanedAt) %></small>
                                 <% } %>
                             <% } %>
                         </div>

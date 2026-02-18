@@ -36,6 +36,22 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-dark text-white">
+                <div class="card-body">
+                    <h5>Total Blogs</h5>
+                    <h2><%= stats.totalBlogs %></h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-secondary text-white">
+                <div class="card-body">
+                    <h5>Subscribers</h5>
+                    <h2><%= stats.totalSubscribers %></h2>
+                </div>
+            </div>
+        </div>
     </div>
     
     <div class="row mt-4">
@@ -53,30 +69,19 @@
 
 
         <div class="col-12 col-md-6 mb-4">
-    <div class="card h-100">
-        <div class="card-body text-center text-md-start">
-            <h5 class="mb-3">Quick Actions</h5>
-
-            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-                <a href="/admin/reports" 
-                   class="btn btn-primary flex-fill flex-md-grow-0">
-                    Manage Reports
-                </a>
-
-                <a href="/admin/teams" 
-                   class="btn btn-success flex-fill flex-md-grow-0">
-                    Manage Teams
-                </a>
-
-                <a href="/admin/reports-download" 
-                   class="btn btn-info flex-fill flex-md-grow-0">
-                    Download Reports
-                </a>
+            <div class="card h-100">
+                <div class="card-body text-center text-md-start">
+                    <h5 class="mb-3">Quick Actions</h5>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-start flex-wrap">
+                        <a href="/admin/reports" class="btn btn-primary flex-fill flex-md-grow-0">Manage Reports</a>
+                        <a href="/admin/teams" class="btn btn-success flex-fill flex-md-grow-0">Manage Teams</a>
+                        <a href="/admin/blogs" class="btn btn-dark flex-fill flex-md-grow-0">Manage Blogs</a>
+                        <a href="/admin/subscribers" class="btn btn-secondary flex-fill flex-md-grow-0">Manage Subscribers</a>
+                        <a href="/admin/reports-download" class="btn btn-info flex-fill flex-md-grow-0">Download Reports</a>
+                    </div>
+                </div>
             </div>
-
         </div>
-    </div>
-</div>
 
 
 

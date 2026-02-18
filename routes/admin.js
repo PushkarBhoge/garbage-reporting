@@ -26,4 +26,12 @@ router.delete('/teams/:teamId/workers/:workerId', requireAdmin, adminController.
 router.get('/reports-download', requireAdmin, adminController.getReportsPage);
 router.get('/download-report', requireAdmin, adminController.downloadReport);
 
+// Blog management routes
+router.get('/blogs', requireAdmin, adminController.getBlogs);
+router.delete('/blogs/:blogId', requireAdmin, adminController.deleteBlog);
+
+// Newsletter subscribers management routes
+router.get('/subscribers', requireAdmin, adminController.getSubscribers);
+router.delete('/subscribers/:subscriberId', requireAdmin, adminController.deleteSubscriber);
+
 module.exports = router;

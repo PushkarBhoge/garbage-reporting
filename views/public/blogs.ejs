@@ -1,0 +1,69 @@
+<%- include('../partials/header') %>
+
+<div class="container my-5">
+    <h2><%= t('Blogs') %></h2>
+    <% if (success) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <%= t('Blog published successfully!') %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <% if (blogs.length === 0) { %>
+        <div class="alert alert-info text-center">
+            <i class="fas fa-info-circle"></i> <%= t('No blogs found. Be the first to create one!') %>
+        </div>
+    <% } else { %>
+        <div class="row">
+            <% blogs.forEach((blog, index) => { 
+                const contentLength = blog.title.length + blog.description.length;
+                const hasImage = blog.image && blog.image.url;
+                
+                let colSize, imgHeight;
+                if (contentLength < 150) {
+                    colSize = 'col-md-4';
+                    imgHeight = hasImage ? '250px' : 'auto';
+                } else if (contentLength < 300) {
+                    colSize = 'col-md-6';
+                    imgHeight = hasImage ? '320px' : 'auto';
+                } else {
+                    colSize = 'col-md-8';
+                    imgHeight = hasImage ? '400px' : 'auto';
+                }
+            %>
+                <div class="<%= colSize %> mb-4">
+                    <div class="card h-100">
+                        <% if (hasImage) { %>
+                            <img src="<%= blog.image.url %>" class="card-img-top" alt="<%= blog.title %>" style="height: <%= imgHeight %>; object-fit: contain; background-color: #f8f9fa;">
+                        <% } %>
+                        <div class="card-body">
+                            <h5 class="card-title text-success"><%= blog.title %></h5>
+                            <p class="card-text"><%= blog.description %></p>
+                        </div>
+                        <div class="card-footer text-muted d-flex justify-content-between align-items-center">
+                            <small><i class="fas fa-calendar"></i> <%= new Date(blog.createdAt).toLocaleDateString(language === 'mr' ? 'mr-IN' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></small>
+                            <small><i class="fas fa-user"></i> <%= blog.author %></small>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    <% } %>
+</div>
+
+<%- include('../partials/footer') %>
+
+<script>
+// Auto-hide success alert and remove query param
+if (window.location.search.includes('success=1')) {
+    window.history.replaceState({}, document.title, window.location.pathname);
+    setTimeout(() => {
+        const alert = document.querySelector('.alert-success');
+        if (alert) {
+            alert.style.transition = 'opacity 0.5s ease';
+            alert.style.opacity = '0';
+            setTimeout(() => alert.remove(), 500);
+        }
+    }, 1000);
+}
+</script>

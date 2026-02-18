@@ -1,0 +1,89 @@
+<%- include('../partials/admin-header') %>
+
+<div class="container my-5">
+    <h2>Manage Blogs</h2>
+    
+    <% if (success) { %>
+        <div class="alert alert-success">Blog deleted successfully!</div>
+    <% } %>
+    
+    <% if (blogs.length === 0) { %>
+        <div class="alert alert-info">No blogs found.</div>
+    <% } else { %>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Image</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% blogs.forEach(blog => { %>
+                        <tr>
+                            <td><%= blog.title %></td>
+                            <td><%= blog.description.substring(0, 100) %><%= blog.description.length > 100 ? '...' : '' %></td>
+                            <td>
+                                <% if (blog.image && blog.image.url) { %>
+                                    <img src="<%= blog.image.url %>" alt="Blog Image" style="width: 80px; height: 60px; object-fit: cover; cursor: pointer;" onclick="viewImage('<%= blog.image.url %>')">
+                                <% } else { %>
+                                    <span class="text-muted">No image</span>
+                                <% } %>
+                            </td>
+                            <td><%= new Date(blog.createdAt).toLocaleDateString() %></td>
+                            <td style="white-space: nowrap;">
+                                <form action="/admin/blogs/<%= blog._id %>?_method=DELETE" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this blog?');">
+                                    <button type="submit" class="btn btn-danger btn-sm" style="min-width: 80px;">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+    <% } %>
+</div>
+
+<!-- Image View Modal -->
+<div class="modal fade" id="imageViewModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">View Image</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" src="" class="img-fluid" alt="Image">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/main.js"></script>
+<script>
+function viewImage(imageUrl) {
+    document.getElementById('modalImage').src = imageUrl;
+    new bootstrap.Modal(document.getElementById('imageViewModal')).show();
+}
+
+// Auto-hide success alert and remove query param
+if (window.location.search.includes('success=1')) {
+    window.history.replaceState({}, document.title, window.location.pathname);
+    setTimeout(() => {
+        const alert = document.querySelector('.alert-success');
+        if (alert) {
+            alert.style.transition = 'opacity 0.5s ease';
+            alert.style.opacity = '0';
+            setTimeout(() => alert.remove(), 500);
+        }
+    }, 1000);
+}
+</script>
+</body>
+</html>

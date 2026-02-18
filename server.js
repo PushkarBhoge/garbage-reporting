@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const session = require('express-session');
+const methodOverride = require('method-override');
 const path = require('path');
 require('dotenv').config();
 
@@ -9,17 +10,22 @@ const publicRoutes = require('./routes/public');
 const adminRoutes = require('./routes/admin');
 const { languageMiddleware } = require('./middleware/language');
 const { getTranslation } = require('./utils/translations');
+const { startRenewalScheduler } = require('./utils/renewalScheduler');
 
 const app = express();
 
 // Connect to MongoDB
 connectDB();
 
+// Start renewal email scheduler
+startRenewalScheduler();
+
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(methodOverride('_method'));
 
 // Session configuration
 app.use(session({
