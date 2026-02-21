@@ -4,14 +4,14 @@
     <h2>Manage Blogs</h2>
     
     <% if (success) { %>
-        <div class="alert alert-success">Blog deleted successfully!</div>
+        <div class="alert alert-success" data-auto-hide="true">✓ Deleted!</div>
     <% } %>
     
     <% if (blogs.length === 0) { %>
-        <div class="alert alert-info">No blogs found.</div>
+        <div class="alert alert-info">No blogs yet.</div>
     <% } else { %>
         <div class="table-responsive">
-            <table class="table table-striped">
+            <table class="table table-striped admin-table">
                 <thead>
                     <tr>
                         <th>Title</th>
@@ -70,19 +70,6 @@
 function viewImage(imageUrl) {
     document.getElementById('modalImage').src = imageUrl;
     new bootstrap.Modal(document.getElementById('imageViewModal')).show();
-}
-
-// Auto-hide success alert and remove query param
-if (window.location.search.includes('success=1')) {
-    window.history.replaceState({}, document.title, window.location.pathname);
-    setTimeout(() => {
-        const alert = document.querySelector('.alert-success');
-        if (alert) {
-            alert.style.transition = 'opacity 0.5s ease';
-            alert.style.opacity = '0';
-            setTimeout(() => alert.remove(), 500);
-        }
-    }, 1000);
 }
 </script>
 </body>

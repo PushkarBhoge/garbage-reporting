@@ -207,15 +207,15 @@ if (newsletterForm) {
             const data = await response.json();
             
             if (response.ok) {
-                showToast('✓ Successfully subscribed! Check your email for confirmation.', 'success');
+                showToast('✓ Subscribed successfully!', 'success');
                 localStorage.setItem('subscriberEmail', email);
                 this.reset();
                 setTimeout(() => location.reload(), 2000);
             } else {
-                showToast(data.error || 'Failed to subscribe. Please try again.', 'error');
+                showToast(data.error || 'Subscription failed', 'error');
             }
         } catch (error) {
-            showToast('An error occurred. Please try again later.', 'error');
+            showToast('Error occurred', 'error');
         }
     });
 }
@@ -235,13 +235,13 @@ if (document.getElementById('unsubscribeBtn')) {
             const data = await response.json();
             if (response.ok) {
                 localStorage.removeItem('subscriberEmail');
-                showToast('✓ Successfully unsubscribed!', 'success');
+                showToast('✓ Unsubscribed!', 'success');
                 setTimeout(() => location.reload(), 2000);
             } else {
-                showToast(data.error || 'Failed to unsubscribe.', 'error');
+                showToast(data.error || 'Unsubscribe failed', 'error');
             }
         } catch (error) {
-            showToast('An error occurred. Please try again.', 'error');
+            showToast('Error occurred', 'error');
         }
     });
 }

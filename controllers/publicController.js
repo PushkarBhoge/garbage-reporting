@@ -23,7 +23,7 @@ const publicController = {
       const { area, landmark, city, pincode, description } = req.body;
       
       if (!req.file) {
-        return res.status(400).json({ error: 'Image is required' });
+        return res.status(400).json({ error: 'Image required' });
       }
 
       const result = await uploadToCloudinary(req.file.buffer);
@@ -38,10 +38,11 @@ const publicController = {
       });
 
       await report.save();
-      res.redirect('/reports?success=1');
+      req.session.reportSuccess = true;
+      res.redirect('/reports');
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Failed to submit report' });
+      res.status(500).json({ error: 'Submit failed' });
     }
   },
 
@@ -63,17 +64,21 @@ const publicController = {
       res.render('public/reports', { 
         title: 'View Reports', 
         reports,
-        success: req.query.success 
+        success: req.session.reportSuccess
       });
+      delete req.session.reportSuccess;
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Failed to fetch reports' });
+      res.status(500).json({ error: 'Fetch failed' });
     }
   },
 
   // Donation page
   getDonate: (req, res) => {
-    res.render('public/donate', { title: 'Donate' });
+    res.render('public/donate', { 
+      title: 'Donate',
+      stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY
+    });
   },
 
   // Our Work page
@@ -103,10 +108,11 @@ const publicController = {
 
       const blog = new Blog(blogData);
       await blog.save();
-      res.redirect('/blogs?success=1');
+      req.session.blogSuccess = true;
+      res.redirect('/blogs');
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Failed to create blog' });
+      res.status(500).json({ error: 'Create failed' });
     }
   },
 
@@ -127,11 +133,12 @@ const publicController = {
       res.render('public/blogs', { 
         title: 'Blogs', 
         blogs,
-        success: req.query.success 
+        success: req.session.blogSuccess
       });
+      delete req.session.blogSuccess;
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Failed to fetch blogs' });
+      res.status(500).json({ error: 'Fetch failed' });
     }
   },
 
@@ -141,21 +148,21 @@ const publicController = {
       const { email } = req.body;
       
       if (!email || !email.trim()) {
-        return res.status(400).json({ error: 'Email is required' });
+        return res.status(400).json({ error: 'Email required' });
       }
 
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
-        return res.status(400).json({ error: 'Invalid email format' });
+        return res.status(400).json({ error: 'Invalid email' });
       }
       
       const existingSubscriber = await Newsletter.findOne({ email });
       if (existingSubscriber) {
         if (existingSubscriber.confirmed) {
-          return res.status(400).json({ error: 'Email already subscribed' });
+          return res.status(400).json({ error: 'Already subscribed' });
         }
         await sendConfirmationEmail(email, existingSubscriber.token);
-        return res.json({ success: true, message: 'Confirmation email sent! Please check your inbox.' });
+        return res.json({ success: true, message: 'Check your email!' });
       }
 
       const token = crypto.randomBytes(32).toString('hex');
@@ -164,10 +171,10 @@ const publicController = {
       
       await sendConfirmationEmail(email, token);
       
-      res.json({ success: true, message: 'Confirmation email sent! Please check your inbox.' });
+      res.json({ success: true, message: 'Check your email!' });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Failed to subscribe' });
+      res.status(500).json({ error: 'Subscribe failed' });
     }
   },
 
@@ -246,7 +253,7 @@ const publicController = {
       
       const subscriber = await Newsletter.findOne({ email, status: 'active' });
       if (!subscriber) {
-        return res.status(404).json({ error: 'Subscriber not found' });
+        return res.status(404).json({ error: 'Not found' });
       }
 
       subscriber.status = 'unsubscribed';
@@ -255,10 +262,41 @@ const publicController = {
       
       req.session.subscriberEmail = null;
       
-      res.json({ success: true, message: 'Successfully unsubscribed' });
+      res.json({ success: true, message: 'Unsubscribed' });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Failed to unsubscribe' });
+      res.status(500).json({ error: 'Unsubscribe failed' });
+    }
+  },
+
+  // Create Stripe checkout session
+  createCheckoutSession: async (req, res) => {
+    try {
+      const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+      const { amount, currency } = req.body;
+
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: [{
+          price_data: {
+            currency: currency.toLowerCase(),
+            product_data: {
+              name: 'Donation to Swachh Sena',
+              description: 'Support our clean city initiative'
+            },
+            unit_amount: Math.round(amount * 100)
+          },
+          quantity: 1
+        }],
+        mode: 'payment',
+        success_url: `${req.protocol}://${req.get('host')}/donate?success=true`,
+        cancel_url: `${req.protocol}://${req.get('host')}/donate?canceled=true`
+      });
+
+      res.json({ sessionId: session.id });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Payment failed' });
     }
   }
 };

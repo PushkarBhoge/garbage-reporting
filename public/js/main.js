@@ -92,32 +92,28 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (!isValid) {
                 e.preventDefault();
-                alert('Please fill in all required fields.');
+                alert('Fill all required fields');
             }
         });
     });
 
-    // Auto-hide alerts after 5 seconds
-    const alerts = document.querySelectorAll('.alert');
+    // Auto-hide alerts after 3 seconds
+    const alerts = document.querySelectorAll('.alert-success[data-auto-hide], .alert-danger[data-auto-hide]');
     alerts.forEach(alert => {
-        setTimeout(() => {
-            alert.style.opacity = '0';
+        const alertKey = 'alert_shown_' + window.location.pathname;
+        if (!sessionStorage.getItem(alertKey)) {
+            sessionStorage.setItem(alertKey, 'true');
             setTimeout(() => {
-                alert.remove();
-            }, 300);
-        }, 5000);
+                alert.style.transition = 'opacity 0.5s ease';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
+            }, 3000);
+        } else {
+            alert.style.display = 'none';
+        }
     });
 
-    // Confirm delete actions
-    const deleteButtons = document.querySelectorAll('[onclick*="delete"]');
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            if (!confirm('Are you sure you want to delete this item?')) {
-                e.preventDefault();
-                return false;
-            }
-        });
-    });
+    // Confirm delete actions - REMOVED to prevent double confirm dialogs
 });
 
 // Utility functions

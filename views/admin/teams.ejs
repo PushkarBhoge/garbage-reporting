@@ -7,11 +7,11 @@
     </div>
     
     <% if (success) { %>
-        <div class="alert alert-success">Operation completed successfully!</div>
+        <div class="alert alert-success" data-auto-hide="true">✓ Done!</div>
     <% } %>
     
     <% if (teams.length === 0) { %>
-        <div class="alert alert-info">No teams found. Create your first team!</div>
+        <div class="alert alert-info">No teams. Create one!</div>
     <% } else { %>
         <div class="row">
             <% teams.forEach(team => { %>
@@ -129,8 +129,12 @@
 </div>
 
 <script>
+let deleteInProgress = false;
+
 function deleteTeam(teamId) {
+    if (deleteInProgress) return;
     if (confirm('Are you sure you want to delete this team?')) {
+        deleteInProgress = true;
         fetch(`/admin/teams/${teamId}`, {
             method: 'DELETE'
         }).then(() => {
@@ -140,7 +144,9 @@ function deleteTeam(teamId) {
 }
 
 function removeWorker(teamId, workerId) {
+    if (deleteInProgress) return;
     if (confirm('Are you sure you want to remove this worker?')) {
+        deleteInProgress = true;
         fetch(`/admin/teams/${teamId}/workers/${workerId}`, {
             method: 'DELETE'
         }).then(() => {

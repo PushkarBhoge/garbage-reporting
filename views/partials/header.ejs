@@ -51,12 +51,12 @@
                     </li>
                     <% } %>
                     <li class="nav-item d-flex align-items-center ms-lg-2 mt-2 mt-lg-0">
-                        <select class="form-select form-select-sm" id="languageSelector" style="width: auto; background-color: rgba(255,255,255,0.2); color: white; border-color: white; border-radius: 20px; padding: 5px 15px; font-weight: 500; appearance: none; -webkit-appearance: none; -moz-appearance: none; background-image: none;">
-                            <option value="en" <%= language === 'en' ? 'selected' : '' %> style="background-color: #198754; color: white;">English</option>
-                            <option value="mr" <%= language === 'mr' ? 'selected' : '' %> style="background-color: #198754; color: white;">मराठी</option>
+                        <select class="form-select form-select-sm lang-selector" id="languageSelector">
+                            <option value="en" <%= language === 'en' ? 'selected' : '' %>>English</option>
+                            <option value="mr" <%= language === 'mr' ? 'selected' : '' %>>मराठी</option>
                         </select>
                     </li>
-                    <li class="nav-item d-flex align-items-center">
+                    <li class="nav-item d-flex align-items-center ms-2">
                         <button type="button" class="btn btn-outline-light" id="themeToggle">
                             <i class="fas fa-moon" id="themeIcon"></i>
                         </button>

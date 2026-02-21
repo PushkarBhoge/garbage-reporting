@@ -4,11 +4,11 @@
     <h2><%= t('Garbage Reports') %></h2>
     
     <% if (success) { %>
-        <div class="alert alert-success"><%= t('Report submitted successfully!') %></div>
+        <div class="alert alert-success" data-auto-hide="true">✓ Report submitted!</div>
     <% } %>
     
     <% if (reports.length === 0) { %>
-        <div class="alert alert-info"><%= t('No reports found.') %></div>
+        <div class="alert alert-info"><%= t('No reports yet') %></div>
     <% } else { %>
         <div class="row">
             <% reports.forEach(report => { 

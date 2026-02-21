@@ -18,5 +18,6 @@ router.get('/confirm-subscription', publicController.confirmSubscription);
 router.get('/renew-subscription', publicController.renewSubscription);
 router.get('/unsubscribe', publicController.unsubscribe);
 router.post('/unsubscribe-by-email', publicController.unsubscribeByEmail);
+router.post('/create-checkout-session', publicController.createCheckoutSession);
 
 module.exports = router;

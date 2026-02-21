@@ -6,8 +6,8 @@
   </div>
 
   <% if (success) { %>
-    <div class="alert alert-success alert-dismissible fade show">
-      Operation completed successfully!
+    <div class="alert alert-success alert-dismissible fade show" data-auto-hide="true">
+      ✓ Done!
       <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
   <% } %>
@@ -15,7 +15,7 @@
   <div class="card">
     <div class="card-body">
       <div class="table-responsive">
-        <table class="table table-hover">
+        <table class="table table-hover admin-table">
           <thead>
             <tr>
               <th>Email</th>
@@ -28,7 +28,7 @@
           <tbody>
             <% if (subscribers.length === 0) { %>
               <tr>
-                <td colspan="5" class="text-center">No subscribers found</td>
+                <td colspan="5" class="text-center">No subscribers yet</td>
               </tr>
             <% } else { %>
               <% subscribers.forEach(subscriber => { %>

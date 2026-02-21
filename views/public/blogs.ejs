@@ -3,15 +3,15 @@
 <div class="container my-5">
     <h2><%= t('Blogs') %></h2>
     <% if (success) { %>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <%= t('Blog published successfully!') %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert" data-auto-hide="true">
+            <%= t('✓ Blog published!') %>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <% } %>
 
     <% if (blogs.length === 0) { %>
         <div class="alert alert-info text-center">
-            <i class="fas fa-info-circle"></i> <%= t('No blogs found. Be the first to create one!') %>
+            <i class="fas fa-info-circle"></i> <%= t('No blogs yet') %>
         </div>
     <% } else { %>
         <div class="row">
@@ -52,18 +52,3 @@
 </div>
 
 <%- include('../partials/footer') %>
-
-<script>
-// Auto-hide success alert and remove query param
-if (window.location.search.includes('success=1')) {
-    window.history.replaceState({}, document.title, window.location.pathname);
-    setTimeout(() => {
-        const alert = document.querySelector('.alert-success');
-        if (alert) {
-            alert.style.transition = 'opacity 0.5s ease';
-            alert.style.opacity = '0';
-            setTimeout(() => alert.remove(), 500);
-        }
-    }, 1000);
-}
-</script>

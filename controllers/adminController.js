@@ -48,7 +48,7 @@ const adminController = {
       });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Failed to load dashboard' });
+      res.status(500).json({ error: 'Dashboard load failed' });
     }
   },
 
@@ -61,11 +61,12 @@ const adminController = {
         title: 'Manage Reports', 
         reports, 
         teams,
-        success: req.query.success 
+        success: req.session.adminReportSuccess
       });
+      delete req.session.adminReportSuccess;
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Failed to fetch reports' });
+      res.status(500).json({ error: 'Fetch failed' });
     }
   },
 
@@ -90,10 +91,11 @@ const adminController = {
       }
 
       await GarbageReport.findByIdAndUpdate(reportId, updateData);
-      res.redirect('/admin/reports?success=1');
+      req.session.adminReportSuccess = true;
+      res.redirect('/admin/reports');
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Failed to update report' });
+      res.status(500).json({ error: 'Update failed' });
     }
   },
 
@@ -104,11 +106,12 @@ const adminController = {
       res.render('admin/teams', { 
         title: 'Manage Teams', 
         teams,
-        success: req.query.success 
+        success: req.session.teamSuccess
       });
+      delete req.session.teamSuccess;
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Failed to fetch teams' });
+      res.status(500).json({ error: 'Fetch failed' });
     }
   },
 
@@ -118,10 +121,11 @@ const adminController = {
       const { name } = req.body;
       const team = new Team({ name });
       await team.save();
-      res.redirect('/admin/teams?success=1');
+      req.session.teamSuccess = true;
+      res.redirect('/admin/teams');
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Failed to add team' });
+      res.status(500).json({ error: 'Add failed' });
     }
   },
 
@@ -131,10 +135,11 @@ const adminController = {
       const { teamId } = req.params;
       const { name } = req.body;
       await Team.findByIdAndUpdate(teamId, { name });
-      res.redirect('/admin/teams?success=1');
+      req.session.teamSuccess = true;
+      res.redirect('/admin/teams');
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Failed to update team' });
+      res.status(500).json({ error: 'Update failed' });
     }
   },
 
@@ -143,10 +148,11 @@ const adminController = {
     try {
       const { teamId } = req.params;
       await Team.findByIdAndDelete(teamId);
-      res.redirect('/admin/teams?success=1');
+      req.session.teamSuccess = true;
+      res.redirect('/admin/teams');
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Failed to delete team' });
+      res.status(500).json({ error: 'Delete failed' });
     }
   },
 
@@ -158,10 +164,11 @@ const adminController = {
       await Team.findByIdAndUpdate(teamId, {
         $push: { workers: { name: workerName } }
       });
-      res.redirect('/admin/teams?success=1');
+      req.session.teamSuccess = true;
+      res.redirect('/admin/teams');
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Failed to add worker' });
+      res.status(500).json({ error: 'Add failed' });
     }
   },
 
@@ -172,10 +179,11 @@ const adminController = {
       await Team.findByIdAndUpdate(teamId, {
         $pull: { workers: { _id: workerId } }
       });
-      res.redirect('/admin/teams?success=1');
+      req.session.teamSuccess = true;
+      res.redirect('/admin/teams');
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Failed to remove worker' });
+      res.status(500).json({ error: 'Remove failed' });
     }
   },
 
@@ -185,7 +193,7 @@ const adminController = {
       res.render('admin/reports-download', { title: 'Download Reports' });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Failed to load reports page' });
+      res.status(500).json({ error: 'Load failed' });
     }
   },
 
@@ -205,7 +213,7 @@ const adminController = {
         startDate = new Date(year, 0, 1);
         endDate = new Date(year, 11, 31, 23, 59, 59);
       } else {
-        return res.status(400).json({ error: 'Invalid parameters' });
+        return res.status(400).json({ error: 'Invalid params' });
       }
       
       const reports = await GarbageReport.find({
@@ -247,7 +255,7 @@ const adminController = {
       res.end();
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Failed to generate report' });
+      res.status(500).json({ error: 'Generate failed' });
     }
   },
 
@@ -258,11 +266,12 @@ const adminController = {
       res.render('admin/blogs', { 
         title: 'Manage Blogs', 
         blogs,
-        success: req.query.success 
+        success: req.session.adminBlogSuccess
       });
+      delete req.session.adminBlogSuccess;
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Failed to fetch blogs' });
+      res.status(500).json({ error: 'Fetch failed' });
     }
   },
 
@@ -271,10 +280,11 @@ const adminController = {
     try {
       const { blogId } = req.params;
       await Blog.findByIdAndDelete(blogId);
-      res.redirect('/admin/blogs?success=1');
+      req.session.adminBlogSuccess = true;
+      res.redirect('/admin/blogs');
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Failed to delete blog' });
+      res.status(500).json({ error: 'Delete failed' });
     }
   },
 
@@ -285,11 +295,12 @@ const adminController = {
       res.render('admin/subscribers', { 
         title: 'Newsletter Subscribers', 
         subscribers,
-        success: req.query.success 
+        success: req.session.subscriberSuccess
       });
+      delete req.session.subscriberSuccess;
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Failed to fetch subscribers' });
+      res.status(500).json({ error: 'Fetch failed' });
     }
   },
 
@@ -298,10 +309,11 @@ const adminController = {
     try {
       const { subscriberId } = req.params;
       await Newsletter.findByIdAndDelete(subscriberId);
-      res.redirect('/admin/subscribers?success=1');
+      req.session.subscriberSuccess = true;
+      res.redirect('/admin/subscribers');
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Failed to delete subscriber' });
+      res.status(500).json({ error: 'Delete failed' });
     }
   }
 };
