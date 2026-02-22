@@ -66,7 +66,7 @@
                                                     <option value="Cleaned" <%= report.status === 'Cleaned' ? 'selected' : '' %>>Cleaned</option>
                                                 </select>
                                             </div>
-                                            <div class="mb-3 team-field" id="teamField<%= report._id %>" data-status="<%= report.status %>">
+                                            <div class="mb-3 <%= report.status === 'Assigned' || report.status === 'Cleaned' ? '' : 'd-none' %>" id="teamField<%= report._id %>">
                                                 <label class="form-label">Assign Team</label>
                                                 <select name="assignedTeam" class="form-select">
                                                     <option value="">Select Team</option>
@@ -77,7 +77,7 @@
                                                     <% }) %>
                                                 </select>
                                             </div>
-                                            <div class="mb-3 after-image-field" id="afterImageField<%= report._id %>" data-status="<%= report.status %>">
+                                            <div class="mb-3 <%= report.status === 'Cleaned' ? '' : 'd-none' %>" id="afterImageField<%= report._id %>">
                                                 <label class="form-label">After Cleaning Image</label>
                                                 <div class="input-group">
                                                     <input type="file" name="afterImage" id="afterImage<%= report._id %>" class="form-control" accept="image/*" onchange="showPreviewIcon(this, '<%= report._id %>')">
@@ -132,28 +132,16 @@ function toggleFields(selectElement, reportId) {
     const teamField = document.getElementById('teamField' + reportId);
     
     if (selectElement.value === 'Cleaned') {
-        afterImageField.style.display = 'block';
-        teamField.style.display = 'block';
+        afterImageField.classList.remove('d-none');
+        teamField.classList.remove('d-none');
     } else if (selectElement.value === 'Assigned') {
-        afterImageField.style.display = 'none';
-        teamField.style.display = 'block';
+        afterImageField.classList.add('d-none');
+        teamField.classList.remove('d-none');
     } else {
-        afterImageField.style.display = 'none';
-        teamField.style.display = 'none';
+        afterImageField.classList.add('d-none');
+        teamField.classList.add('d-none');
     }
 }
-
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.team-field').forEach(field => {
-        const status = field.dataset.status;
-        field.style.display = (status === 'Assigned' || status === 'Cleaned') ? 'block' : 'none';
-    });
-    
-    document.querySelectorAll('.after-image-field').forEach(field => {
-        const status = field.dataset.status;
-        field.style.display = status === 'Cleaned' ? 'block' : 'none';
-    });
-});
 
 function viewImage(imageUrl) {
     document.getElementById('modalImage').src = imageUrl;

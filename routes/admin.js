@@ -34,4 +34,8 @@ router.delete('/blogs/:blogId', requireAdmin, adminController.deleteBlog);
 router.get('/subscribers', requireAdmin, adminController.getSubscribers);
 router.delete('/subscribers/:subscriberId', requireAdmin, adminController.deleteSubscriber);
 
+// Donations management routes
+router.get('/donations', requireAdmin, adminController.getDonations);
+router.delete('/donations/:donationId', requireAdmin, adminController.deleteDonation);
+
 module.exports = router;

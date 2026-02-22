@@ -52,6 +52,15 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body">
+                    <h5>Total Donations</h5>
+                    <h2>₹<%= Math.round(stats.totalDonations).toLocaleString() %></h2>
+                    <small><%= stats.donationCount %> donations</small>
+                </div>
+            </div>
+        </div>
     </div>
     
     <div class="row mt-4">
@@ -77,6 +86,7 @@
                         <a href="/admin/teams" class="btn btn-success flex-fill flex-md-grow-0">Manage Teams</a>
                         <a href="/admin/blogs" class="btn btn-dark flex-fill flex-md-grow-0">Manage Blogs</a>
                         <a href="/admin/subscribers" class="btn btn-secondary flex-fill flex-md-grow-0">Manage Subscribers</a>
+                        <a href="/admin/donations" class="btn btn-purple flex-fill flex-md-grow-0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">View Donations</a>
                         <a href="/admin/reports-download" class="btn btn-info flex-fill flex-md-grow-0">Download Reports</a>
                     </div>
                 </div>

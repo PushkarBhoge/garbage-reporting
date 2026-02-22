@@ -1,5 +1,16 @@
 /* Custom styles for Garbage Reporting System */
 
+/* Required field asterisk - always red in both modes */
+.text-danger,
+label .text-danger {
+    color: #dc3545 !important;
+}
+
+[data-theme="dark"] .text-danger,
+[data-theme="dark"] label .text-danger {
+    color: #dc3545 !important;
+}
+
 /* Page fade-in animation */
 body {
     opacity: 0;
@@ -186,6 +197,24 @@ body {
 .bg-pending { background-color: #ffc107 !important; }
 .bg-assigned { background-color: #17a2b8 !important; }
 .bg-cleaned { background-color: #28a745 !important; }
+
+[data-theme="dark"] .card.bg-warning h2,
+[data-theme="dark"] .card.bg-warning h5,
+[data-theme="dark"] .card.bg-warning *,
+[data-theme="dark"] .stat-card.bg-warning h2,
+[data-theme="dark"] .stat-card.bg-warning h5,
+[data-theme="dark"] .stat-card.bg-warning * {
+    color: #000 !important;
+}
+
+[data-theme="dark"] .card.bg-info h2,
+[data-theme="dark"] .card.bg-info h5,
+[data-theme="dark"] .card.bg-info *,
+[data-theme="dark"] .stat-card.bg-info h2,
+[data-theme="dark"] .stat-card.bg-info h5,
+[data-theme="dark"] .stat-card.bg-info * {
+    color: #000 !important;
+}
 
 /* Footer light mode */
 footer.bg-dark {
@@ -380,8 +409,20 @@ footer.bg-dark p {
     border: 1px solid #ffc107 !important;
 }
 
+[data-theme="dark"] .card.bg-warning h2,
+[data-theme="dark"] .card.bg-warning h5,
+[data-theme="dark"] .stat-card.bg-warning h2,
+[data-theme="dark"] .stat-card.bg-warning h5 {
+    color: #000 !important;
+}
+
 [data-theme="dark"] .admin-page .card.bg-warning {
     background-color: #ffc107 !important;
+    color: #000 !important;
+}
+
+[data-theme="dark"] .admin-page .card.bg-warning h2,
+[data-theme="dark"] .admin-page .card.bg-warning h5 {
     color: #000 !important;
 }
 
@@ -392,8 +433,20 @@ footer.bg-dark p {
     border: 1px solid #0dcaf0 !important;
 }
 
+[data-theme="dark"] .card.bg-info h2,
+[data-theme="dark"] .card.bg-info h5,
+[data-theme="dark"] .stat-card.bg-info h2,
+[data-theme="dark"] .stat-card.bg-info h5 {
+    color: #000 !important;
+}
+
 [data-theme="dark"] .admin-page .card.bg-info {
     background-color: #0dcaf0 !important;
+    color: #000 !important;
+}
+
+[data-theme="dark"] .admin-page .card.bg-info h2,
+[data-theme="dark"] .admin-page .card.bg-info h5 {
     color: #000 !important;
 }
 
@@ -531,7 +584,11 @@ footer.bg-dark p {
 }
 
 [data-theme="dark"] .admin-table thead {
-    background: linear-gradient(135deg, #198754, #20c997);
+    background: linear-gradient(135deg, #198754, #20c997) !important;
+}
+
+[data-theme="dark"] .admin-table thead th {
+    color: white !important;
 }
 
 [data-theme="dark"] .admin-table tbody tr {
@@ -616,6 +673,18 @@ footer.bg-dark p {
     color: #000 !important;
 }
 
+[data-theme="dark"] .badge.bg-warning,
+[data-theme="dark"] span.badge.bg-warning {
+    color: #fff !important;
+    background-color: #ffc107 !important;
+}
+
+[data-theme="dark"] .badge.bg-info,
+[data-theme="dark"] span.badge.bg-info {
+    color: #fff !important;
+    background-color: #0dcaf0 !important;
+}
+
 [data-theme="dark"] .bg-dark {
     background-color: #1A1A1A !important;
 }
@@ -659,9 +728,22 @@ footer.bg-dark p {
 
 [data-theme="dark"] .admin-page h2,
 [data-theme="dark"] .admin-page .table,
-[data-theme="dark"] .admin-page .table td,
+[data-theme="dark"] .admin-page .table td {
+    color: #F5F5F5 !important;
+}
+
 [data-theme="dark"] .admin-page .table th {
     color: #F5F5F5 !important;
+}
+
+[data-theme="dark"] .admin-page .card.bg-warning,
+[data-theme="dark"] .admin-page .card.bg-warning * {
+    color: #fff !important;
+}
+
+[data-theme="dark"] .admin-page .card.bg-info,
+[data-theme="dark"] .admin-page .card.bg-info * {
+    color: #fff !important;
 }
 
 [data-theme="dark"] .admin-page .list-group-item {
@@ -890,4 +972,13 @@ footer.bg-dark p {
         opacity: 1;
         transform: translate(0, 0);
     }
+}
+
+/* Force white text on badges in dark mode - highest priority */
+[data-theme="dark"] .table .badge.bg-warning {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .table .badge.bg-info {
+    color: #ffffff !important;
 }

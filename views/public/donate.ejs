@@ -46,12 +46,6 @@ const formatTextNumbers = (text) => {
                             </div>
                         </div>
                         
-                        <div class="mb-3" id="conversionInfo" style="display: none;">
-                            <div class="alert alert-info">
-                                <strong>Conversion:</strong> <span id="conversionText"></span>
-                            </div>
-                        </div>
-                        
                         <div class="mb-3">
                             <label class="form-label"><%= t('Quick Amount Selection') %></label>
                             <div class="row">
@@ -89,13 +83,13 @@ const formatTextNumbers = (text) => {
                         </div>
                         
                         <div class="mb-3">
-                            <label for="donorName" class="form-label"><%= t('Your Name (Optional)') %></label>
-                            <input type="text" class="form-control" id="donorName" name="donorName" placeholder="<%= t('Enter your name') %>">
+                            <label for="donorName" class="form-label"><%= t('Your Name') %> <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="donorName" name="donorName" placeholder="<%= t('Enter your name') %>" required>
                         </div>
                         
                         <div class="mb-3">
-                            <label for="message" class="form-label"><%= t('Message (Optional)') %></label>
-                            <textarea class="form-control" id="message" name="message" rows="3" placeholder="<%= t('Leave a message of support') %>"></textarea>
+                            <label for="message" class="form-label"><%= t('Message') %> <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="message" name="message" rows="3" placeholder="<%= t('Leave a message of support') %>" required></textarea>
                         </div>
                         
                         <div class="text-center">
@@ -162,11 +156,6 @@ function updateCurrency() {
         
         document.getElementById(`quick${index + 1}`).textContent = `${symbol}${formatNumber(convertedAmount)}`;
     });
-    
-    const amountInput = document.getElementById('amount');
-    if (amountInput.value) {
-        showConversion();
-    }
 }
 
 function setAmount(baseAmount) {
@@ -176,33 +165,25 @@ function setAmount(baseAmount) {
         Math.round(baseAmount / (exchangeRates[selectedCurrency] || 1));
     
     document.getElementById('amount').value = convertedAmount;
-    showConversion();
 }
 
-function showConversion() {
-    const selectedCurrency = document.getElementById('currency').value;
-    const amount = document.getElementById('amount').value;
-    
-    if (amount && selectedCurrency !== baseCurrency && exchangeRates[selectedCurrency]) {
-        const inrAmount = Math.round(amount * exchangeRates[selectedCurrency]);
-        document.getElementById('conversionText').textContent = 
-            `${currencySymbols[selectedCurrency]}${formatNumber(amount)} = ₹${formatNumber(inrAmount)}`;
-        document.getElementById('conversionInfo').style.display = 'block';
-    } else {
-        document.getElementById('conversionInfo').style.display = 'none';
-    }
-}
-
-document.getElementById('amount').addEventListener('input', showConversion);
+document.getElementById('amount').addEventListener('input', () => {});
 
 document.getElementById('donationForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     
     const amount = document.getElementById('amount').value;
     const currency = document.getElementById('currency').value;
+    const donorName = document.getElementById('donorName').value;
+    const message = document.getElementById('message').value;
     
     if (!amount || amount <= 0) {
         alert('Please enter a valid amount');
+        return;
+    }
+    
+    if (!donorName || !message) {
+        alert('Please fill in your name and message');
         return;
     }
     
@@ -214,19 +195,27 @@ document.getElementById('donationForm').addEventListener('submit', async functio
         const response = await fetch('/create-checkout-session', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ amount: parseFloat(amount), currency })
+            body: JSON.stringify({ amount: parseFloat(amount), currency, donorName, message })
         });
         
-        const { sessionId } = await response.json();
-        const { error } = await stripe.redirectToCheckout({ sessionId });
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.error || 'Payment failed');
+        }
+        
+        if (!data.sessionId) {
+            throw new Error('No session ID received');
+        }
+        
+        const { error } = await stripe.redirectToCheckout({ sessionId: data.sessionId });
         
         if (error) {
-            alert(error.message);
-            donateBtn.disabled = false;
-            donateBtn.innerHTML = '<i class="fas fa-heart"></i> <%= t("Donate Now") %>';
+            throw new Error(error.message);
         }
     } catch (error) {
-        alert('Payment failed. Please try again.');
+        console.error('Payment error:', error);
+        alert(error.message || 'Payment failed. Please try again.');
         donateBtn.disabled = false;
         donateBtn.innerHTML = '<i class="fas fa-heart"></i> <%= t("Donate Now") %>';
     }
@@ -236,8 +225,22 @@ fetchExchangeRates();
 updateCurrency();
 
 if (window.location.search.includes('success=true')) {
-    alert('✓ Thank you for your donation!');
-    window.history.replaceState({}, document.title, window.location.pathname);
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('session_id');
+    
+    if (sessionId) {
+        fetch(`/verify-payment?session_id=${sessionId}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert('✓ Thank you for your donation!');
+                }
+                window.history.replaceState({}, document.title, window.location.pathname);
+            });
+    } else {
+        alert('✓ Thank you for your donation!');
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
 } else if (window.location.search.includes('canceled=true')) {
     alert('Payment was canceled');
     window.history.replaceState({}, document.title, window.location.pathname);

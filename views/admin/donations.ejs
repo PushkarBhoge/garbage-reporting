@@ -1,0 +1,107 @@
+<%- include('../partials/admin-header') %>
+
+<div class="container my-5">
+    <h2>Donations</h2>
+    
+    <% if (success) { %>
+        <div class="alert alert-success" data-auto-hide="true">✓ Deleted!</div>
+    <% } %>
+    
+    <% 
+    const totalAmount = donations.filter(d => d.status === 'completed').reduce((sum, d) => {
+        const rate = d.currency === 'INR' ? 1 : d.currency === 'USD' ? 83 : d.currency === 'EUR' ? 90 : 12;
+        return sum + (d.amount * rate);
+    }, 0);
+    %>
+    
+    <div class="row mt-4 mb-4">
+        <div class="col-md-4">
+            <div class="card text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body">
+                    <h5>Total Donations</h5>
+                    <h2>₹<%= Math.round(totalAmount).toLocaleString() %></h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5>Completed</h5>
+                    <h2><%= donations.filter(d => d.status === 'completed').length %></h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h5>Pending</h5>
+                    <h2><%= donations.filter(d => d.status === 'pending').length %></h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table admin-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Donor Name</th>
+                            <th>Message</th>
+                            <th>Amount</th>
+                            <th>Currency</th>
+                            <th>Amount (INR)</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (donations.length === 0) { %>
+                            <tr>
+                                <td colspan="8" class="text-center">No donations yet</td>
+                            </tr>
+                        <% } else { %>
+                            <% donations.forEach(donation => { 
+                                const rate = donation.currency === 'INR' ? 1 : donation.currency === 'USD' ? 83 : donation.currency === 'EUR' ? 90 : 12;
+                                const inrAmount = donation.amount * rate;
+                            %>
+                                <tr>
+                                    <td><%= new Date(donation.createdAt).toLocaleString() %></td>
+                                    <td><%= donation.donorName || 'Anonymous' %></td>
+                                    <td><%= donation.message || '-' %></td>
+                                    <td><%= donation.amount.toLocaleString() %></td>
+                                    <td><%= donation.currency %></td>
+                                    <td>₹<%= Math.round(inrAmount).toLocaleString() %></td>
+                                    <td>
+                                        <% if (donation.status === 'completed') { %>
+                                            <span class="badge bg-success">Completed</span>
+                                        <% } else if (donation.status === 'pending') { %>
+                                            <span class="badge bg-warning">Pending</span>
+                                        <% } else { %>
+                                            <span class="badge bg-danger">Failed</span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <% if (donation.status === 'pending' || donation.status === 'failed') { %>
+                                            <form action="/admin/donations/<%= donation._id %>?_method=DELETE" method="POST" style="display: inline;" onsubmit="return confirm('Delete this donation?');">
+                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        <% } else { %>
+                                            -
+                                        <% } %>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

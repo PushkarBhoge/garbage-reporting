@@ -2,6 +2,7 @@ const GarbageReport = require('../models/GarbageReport');
 const Blog = require('../models/Blog');
 const Team = require('../models/Team');
 const Newsletter = require('../models/Newsletter');
+const Donation = require('../models/Donation');
 const { uploadToCloudinary } = require('../config/cloudinary');
 
 const adminController = {
@@ -41,10 +42,17 @@ const adminController = {
       const totalTeams = await Team.countDocuments();
       const totalBlogs = await Blog.countDocuments();
       const totalSubscribers = await Newsletter.countDocuments({ status: 'active' });
+      
+      const donations = await Donation.find({ status: 'completed' });
+      const totalDonations = donations.reduce((sum, d) => {
+        const rate = d.currency === 'INR' ? 1 : d.currency === 'USD' ? 83 : d.currency === 'EUR' ? 90 : 12;
+        return sum + (d.amount * rate);
+      }, 0);
+      const donationCount = donations.length;
 
       res.render('admin/dashboard', {
         title: 'Admin Dashboard',
-        stats: { totalReports, pendingReports, assignedReports, cleanedReports, totalTeams, totalBlogs, totalSubscribers }
+        stats: { totalReports, pendingReports, assignedReports, cleanedReports, totalTeams, totalBlogs, totalSubscribers, totalDonations, donationCount }
       });
     } catch (error) {
       console.error(error);
@@ -311,6 +319,35 @@ const adminController = {
       await Newsletter.findByIdAndDelete(subscriberId);
       req.session.subscriberSuccess = true;
       res.redirect('/admin/subscribers');
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Delete failed' });
+    }
+  },
+
+  // Donations management
+  getDonations: async (req, res) => {
+    try {
+      const donations = await Donation.find().sort({ createdAt: -1 });
+      res.render('admin/donations', { 
+        title: 'Donations', 
+        donations,
+        success: req.session.donationSuccess
+      });
+      delete req.session.donationSuccess;
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Fetch failed' });
+    }
+  },
+
+  // Delete donation
+  deleteDonation: async (req, res) => {
+    try {
+      const { donationId } = req.params;
+      await Donation.findByIdAndDelete(donationId);
+      req.session.donationSuccess = true;
+      res.redirect('/admin/donations');
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Delete failed' });

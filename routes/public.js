@@ -9,6 +9,8 @@ router.get('/report', publicController.getReportForm);
 router.post('/report', upload.single('beforeImage'), publicController.submitReport);
 router.get('/reports', publicController.getReports);
 router.get('/donate', publicController.getDonate);
+router.post('/create-checkout-session', publicController.createCheckoutSession);
+router.get('/verify-payment', publicController.verifyPayment);
 router.get('/our-work', publicController.getOurWork);
 router.get('/create-blog', publicController.getCreateBlog);
 router.post('/create-blog', upload.single('image'), publicController.submitBlog);
@@ -18,6 +20,5 @@ router.get('/confirm-subscription', publicController.confirmSubscription);
 router.get('/renew-subscription', publicController.renewSubscription);
 router.get('/unsubscribe', publicController.unsubscribe);
 router.post('/unsubscribe-by-email', publicController.unsubscribeByEmail);
-router.post('/create-checkout-session', publicController.createCheckoutSession);
 
 module.exports = router;

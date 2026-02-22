@@ -1,6 +1,7 @@
 const GarbageReport = require('../models/GarbageReport');
 const Blog = require('../models/Blog');
 const Newsletter = require('../models/Newsletter');
+const Donation = require('../models/Donation');
 const { uploadToCloudinary } = require('../config/cloudinary');
 const { translateText } = require('../middleware/language');
 const { sendConfirmationEmail, sendWelcomeEmail } = require('../config/email');
@@ -272,8 +273,16 @@ const publicController = {
   // Create Stripe checkout session
   createCheckoutSession: async (req, res) => {
     try {
+      if (!process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY.includes('your_')) {
+        return res.status(500).json({ error: 'Stripe not configured. Please add valid API keys.' });
+      }
+
       const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-      const { amount, currency } = req.body;
+      const { amount, currency, donorName, message } = req.body;
+
+      if (!amount || amount <= 0) {
+        return res.status(400).json({ error: 'Invalid amount' });
+      }
 
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
@@ -289,14 +298,49 @@ const publicController = {
           quantity: 1
         }],
         mode: 'payment',
-        success_url: `${req.protocol}://${req.get('host')}/donate?success=true`,
+        success_url: `${req.protocol}://${req.get('host')}/donate?success=true&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${req.protocol}://${req.get('host')}/donate?canceled=true`
       });
 
+      // Save donation record
+      const donation = new Donation({
+        amount,
+        currency,
+        donorName,
+        message,
+        stripeSessionId: session.id,
+        status: 'pending'
+      });
+      await donation.save();
+
       res.json({ sessionId: session.id });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Payment failed' });
+      console.error('Stripe Error:', error.message);
+      res.status(500).json({ error: error.message || 'Payment failed' });
+    }
+  },
+
+  // Verify payment success
+  verifyPayment: async (req, res) => {
+    try {
+      const { session_id } = req.query;
+      if (!session_id) return res.json({ success: false });
+
+      const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+      const session = await stripe.checkout.sessions.retrieve(session_id);
+
+      if (session.payment_status === 'paid') {
+        await Donation.findOneAndUpdate(
+          { stripeSessionId: session_id },
+          { status: 'completed' }
+        );
+        return res.json({ success: true });
+      }
+
+      res.json({ success: false });
+    } catch (error) {
+      console.error('Verify Error:', error);
+      res.json({ success: false });
     }
   }
 };
