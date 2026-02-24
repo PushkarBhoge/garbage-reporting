@@ -50,9 +50,67 @@ const adminController = {
       }, 0);
       const donationCount = donations.length;
 
+      // Monthly reports data (last 6 months)
+      const sixMonthsAgo = new Date();
+      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+      const reports = await GarbageReport.find({ createdAt: { $gte: sixMonthsAgo } });
+      
+      const monthlyData = {};
+      for (let i = 5; i >= 0; i--) {
+        const date = new Date();
+        date.setMonth(date.getMonth() - i);
+        const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        monthlyData[key] = 0;
+      }
+      
+      reports.forEach(report => {
+        const key = `${report.createdAt.getFullYear()}-${String(report.createdAt.getMonth() + 1).padStart(2, '0')}`;
+        if (monthlyData[key] !== undefined) monthlyData[key]++;
+      });
+
+      // Monthly donations data (last 6 months)
+      const donationsData = await Donation.find({ 
+        status: 'completed',
+        createdAt: { $gte: sixMonthsAgo }
+      });
+      
+      const monthlyDonations = {};
+      for (let i = 5; i >= 0; i--) {
+        const date = new Date();
+        date.setMonth(date.getMonth() - i);
+        const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        monthlyDonations[key] = 0;
+      }
+      
+      donationsData.forEach(donation => {
+        const key = `${donation.createdAt.getFullYear()}-${String(donation.createdAt.getMonth() + 1).padStart(2, '0')}`;
+        if (monthlyDonations[key] !== undefined) {
+          const rate = donation.currency === 'INR' ? 1 : donation.currency === 'USD' ? 83 : donation.currency === 'EUR' ? 90 : 12;
+          monthlyDonations[key] += (donation.amount * rate);
+        }
+      });
+
+      // Team performance
+      const teamPerformance = await GarbageReport.aggregate([
+        { $match: { status: 'Cleaned', assignedTeam: { $ne: null } } },
+        { $group: { _id: '$assignedTeam', count: { $sum: 1 } } },
+        { $lookup: { from: 'teams', localField: '_id', foreignField: '_id', as: 'team' } },
+        { $unwind: '$team' },
+        { $project: { teamName: '$team.name', count: 1 } },
+        { $sort: { count: -1 } }
+      ]);
+
       res.render('admin/dashboard', {
         title: 'Admin Dashboard',
-        stats: { totalReports, pendingReports, assignedReports, cleanedReports, totalTeams, totalBlogs, totalSubscribers, totalDonations, donationCount }
+        stats: { totalReports, pendingReports, assignedReports, cleanedReports, totalTeams, totalBlogs, totalSubscribers, totalDonations, donationCount },
+        chartData: {
+          monthlyLabels: Object.keys(monthlyData),
+          monthlyValues: Object.values(monthlyData),
+          donationLabels: Object.keys(monthlyDonations),
+          donationValues: Object.values(monthlyDonations).map(v => Math.round(v)),
+          teamLabels: teamPerformance.map(t => t.teamName),
+          teamValues: teamPerformance.map(t => t.count)
+        }
       });
     } catch (error) {
       console.error(error);

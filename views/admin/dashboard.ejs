@@ -62,21 +62,9 @@
             </div>
         </div>
     </div>
-    
+
+    <!-- Quick Actions and Teams Section -->
     <div class="row mt-4">
-        <!-- <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <h5>Quick Actions</h5>
-                    <a href="/admin/reports" class="btn btn-primary me-2">Manage Reports</a>
-                    <a href="/admin/teams" class="btn btn-success me-2">Manage Teams</a>
-                    <a href="/admin/reports-download" class="btn btn-info">Download Reports</a>
-                </div>
-            </div>
-        </div> -->
-
-
-
         <div class="col-12 col-md-6 mb-4">
             <div class="card h-100">
                 <div class="card-body text-center text-md-start">
@@ -93,11 +81,8 @@
             </div>
         </div>
 
-
-
-
-        <div class="col-md-6">
-            <div class="card">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
                 <div class="card-body">
                     <h5>Teams</h5>
                     <p>Total Teams: <strong><%= stats.totalTeams %></strong></p>
@@ -106,6 +91,173 @@
             </div>
         </div>
     </div>
+
+    <!-- Charts Section -->
+    <div class="row mt-4">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Reports Status Distribution</h5>
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Monthly Reports Trend</h5>
+                    <canvas id="monthlyChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Monthly Donations (INR)</h5>
+                    <canvas id="donationChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Team Performance</h5>
+                    <canvas id="teamChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Detect dark mode and set chart text color
+const isDarkMode = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+const textColor = isDarkMode ? '#ffffff' : '#666';
+
+// Status Pie Chart
+const statusCtx = document.getElementById('statusChart').getContext('2d');
+new Chart(statusCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Pending', 'Assigned', 'Cleaned'],
+        datasets: [{
+            data: [<%= stats.pendingReports %>, <%= stats.assignedReports %>, <%= stats.cleanedReports %>],
+            backgroundColor: ['#ffc107', '#17a2b8', '#28a745']
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        aspectRatio: 2,
+        plugins: {
+            legend: { 
+                position: 'bottom',
+                labels: { color: textColor }
+            }
+        }
+    }
+});
+
+// Monthly Trend Line Chart
+const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+new Chart(monthlyCtx, {
+    type: 'line',
+    data: {
+        labels: <%- JSON.stringify(chartData.monthlyLabels) %>,
+        datasets: [{
+            label: 'Reports',
+            data: <%= JSON.stringify(chartData.monthlyValues) %>,
+            borderColor: '#007bff',
+            backgroundColor: 'rgba(0, 123, 255, 0.1)',
+            tension: 0.4,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            y: { 
+                beginAtZero: true,
+                ticks: { color: textColor },
+                grid: { color: isDarkMode ? '#444' : '#e0e0e0' }
+            },
+            x: { 
+                ticks: { color: textColor },
+                grid: { color: isDarkMode ? '#444' : '#e0e0e0' }
+            }
+        }
+    }
+});
+
+// Donation Bar Chart
+const donationCtx = document.getElementById('donationChart').getContext('2d');
+new Chart(donationCtx, {
+    type: 'bar',
+    data: {
+        labels: <%- JSON.stringify(chartData.donationLabels) %>,
+        datasets: [{
+            label: 'Donations (INR)',
+            data: <%= JSON.stringify(chartData.donationValues) %>,
+            backgroundColor: '#764ba2'
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            y: { 
+                beginAtZero: true,
+                ticks: { color: textColor },
+                grid: { color: isDarkMode ? '#444' : '#e0e0e0' }
+            },
+            x: { 
+                ticks: { color: textColor },
+                grid: { color: isDarkMode ? '#444' : '#e0e0e0' }
+            }
+        }
+    }
+});
+
+// Team Performance Chart
+const teamCtx = document.getElementById('teamChart').getContext('2d');
+new Chart(teamCtx, {
+    type: 'bar',
+    data: {
+        labels: <%- JSON.stringify(chartData.teamLabels) %>,
+        datasets: [{
+            label: 'Cleaned Reports',
+            data: <%= JSON.stringify(chartData.teamValues) %>,
+            backgroundColor: '#17a2b8'
+        }]
+    },
+    options: {
+        responsive: true,
+        indexAxis: 'y',
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            x: { 
+                beginAtZero: true,
+                ticks: { color: textColor },
+                grid: { color: isDarkMode ? '#444' : '#e0e0e0' }
+            },
+            y: { 
+                ticks: { color: textColor },
+                grid: { color: isDarkMode ? '#444' : '#e0e0e0' }
+            }
+        }
+    }
+});
+</script>
 
 <%- include('../partials/footer') %>

@@ -152,7 +152,7 @@ function updateCurrency() {
     baseAmounts.forEach((amount, index) => {
         const convertedAmount = selectedCurrency === baseCurrency ? 
             amount : 
-            Math.round(amount / (exchangeRates[selectedCurrency] || 1));
+            Math.round(amount * (exchangeRates[selectedCurrency] || 1));
         
         document.getElementById(`quick${index + 1}`).textContent = `${symbol}${formatNumber(convertedAmount)}`;
     });
@@ -162,7 +162,7 @@ function setAmount(baseAmount) {
     const selectedCurrency = document.getElementById('currency').value;
     const convertedAmount = selectedCurrency === baseCurrency ? 
         baseAmount : 
-        Math.round(baseAmount / (exchangeRates[selectedCurrency] || 1));
+        Math.round(baseAmount * (exchangeRates[selectedCurrency] || 1));
     
     document.getElementById('amount').value = convertedAmount;
 }
