@@ -83,11 +83,6 @@ const formatTextNumbers = (text) => {
                         </div>
                         
                         <div class="mb-3">
-                            <label for="donorName" class="form-label"><%= t('Your Name') %> <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="donorName" name="donorName" placeholder="<%= t('Enter your name') %>" required>
-                        </div>
-                        
-                        <div class="mb-3">
                             <label for="message" class="form-label"><%= t('Message') %> <span class="text-danger">*</span></label>
                             <textarea class="form-control" id="message" name="message" rows="3" placeholder="<%= t('Leave a message of support') %>" required></textarea>
                         </div>
@@ -142,12 +137,23 @@ async function fetchExchangeRates() {
     }
 }
 
+let previousCurrency = 'INR';
+
 function updateCurrency() {
     const currencySelect = document.getElementById('currency');
     const selectedCurrency = currencySelect.value;
     const symbol = currencySymbols[selectedCurrency];
+    const amountInput = document.getElementById('amount');
     
     document.getElementById('currencySymbol').textContent = symbol;
+    
+    // Convert existing amount to new currency
+    if (amountInput.value && exchangeRates[selectedCurrency] && exchangeRates[previousCurrency]) {
+        const currentAmount = parseFloat(amountInput.value);
+        const inrAmount = previousCurrency === baseCurrency ? currentAmount : currentAmount / exchangeRates[previousCurrency];
+        const newAmount = selectedCurrency === baseCurrency ? inrAmount : inrAmount * exchangeRates[selectedCurrency];
+        amountInput.value = Math.round(newAmount);
+    }
     
     baseAmounts.forEach((amount, index) => {
         const convertedAmount = selectedCurrency === baseCurrency ? 
@@ -156,6 +162,8 @@ function updateCurrency() {
         
         document.getElementById(`quick${index + 1}`).textContent = `${symbol}${formatNumber(convertedAmount)}`;
     });
+    
+    previousCurrency = selectedCurrency;
 }
 
 function setAmount(baseAmount) {
@@ -174,7 +182,6 @@ document.getElementById('donationForm').addEventListener('submit', async functio
     
     const amount = document.getElementById('amount').value;
     const currency = document.getElementById('currency').value;
-    const donorName = document.getElementById('donorName').value;
     const message = document.getElementById('message').value;
     
     if (!amount || amount <= 0) {
@@ -182,8 +189,8 @@ document.getElementById('donationForm').addEventListener('submit', async functio
         return;
     }
     
-    if (!donorName || !message) {
-        alert('Please fill in your name and message');
+    if (!message) {
+        alert('Please fill in your message');
         return;
     }
     
@@ -195,7 +202,7 @@ document.getElementById('donationForm').addEventListener('submit', async functio
         const response = await fetch('/create-checkout-session', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ amount: parseFloat(amount), currency, donorName, message })
+            body: JSON.stringify({ amount: parseFloat(amount), currency, message })
         });
         
         const data = await response.json();

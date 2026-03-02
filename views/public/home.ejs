@@ -220,32 +220,6 @@ if (newsletterForm) {
     });
 }
 
-if (document.getElementById('unsubscribeBtn')) {
-    document.getElementById('unsubscribeBtn').addEventListener('click', async function() {
-        if (!confirm('Are you sure you want to unsubscribe from our newsletter?')) return;
-        
-        const email = this.dataset.email;
-        try {
-            const response = await fetch('/unsubscribe-by-email', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email })
-            });
-            
-            const data = await response.json();
-            if (response.ok) {
-                localStorage.removeItem('subscriberEmail');
-                showToast('✓ Unsubscribed!', 'success');
-                setTimeout(() => location.reload(), 2000);
-            } else {
-                showToast(data.error || 'Unsubscribe failed', 'error');
-            }
-        } catch (error) {
-            showToast('Error occurred', 'error');
-        }
-    });
-}
-
 document.querySelectorAll('.accordion-button').forEach(button => {
     button.addEventListener('click', function() {
         const icon = this.querySelector('i');

@@ -11,6 +11,7 @@ const donationSchema = new mongoose.Schema({
     default: 'INR'
   },
   donorName: String,
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   message: String,
   stripeSessionId: String,
   status: {

@@ -8,8 +8,10 @@ require('dotenv').config();
 const connectDB = require('./config/database');
 const publicRoutes = require('./routes/public');
 const adminRoutes = require('./routes/admin');
+const authRoutes = require('./routes/auth');
 const { languageMiddleware } = require('./middleware/language');
 const { getTranslation } = require('./utils/translations');
+const { translateToMarathi } = require('./utils/nameTranslator');
 const { startRenewalScheduler } = require('./utils/renewalScheduler');
 
 const app = express();
@@ -44,8 +46,15 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Language middleware
 app.use(languageMiddleware);
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
   res.locals.t = (text) => getTranslation(text, req.session.language);
+  res.locals.userId = req.session.userId;
+  if (req.session.language === 'mr' && req.session.name) {
+    res.locals.userName = await translateToMarathi(req.session.name);
+  } else {
+    res.locals.userName = req.session.name;
+  }
+  res.locals.userRole = req.session.role;
   next();
 });
 
@@ -59,6 +68,7 @@ app.post('/set-language', (req, res) => {
 });
 
 // Routes
+app.use('/auth', authRoutes);
 app.use('/', publicRoutes);
 app.use('/admin', adminRoutes);
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %> - Swachh Sena</title>
+    <title>Swachh Sena - <%= title %></title>
     <link rel="icon" href="/assets/logo-eng.png" type="image/png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -25,31 +25,23 @@
                         <a class="nav-link <%= title === 'Garbage Reporting System' ? 'active' : '' %>" href="/"><%= t('Home') %></a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link <%= title === 'Our Work' ? 'active' : '' %>" href="/our-work"><%= t('Our Work') %></a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link <%= title === 'Report Garbage' ? 'active' : '' %>" href="/report"><%= t('Report Garbage') %></a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <%= title === 'View Reports' ? 'active' : '' %>" href="/reports"><%= t('View Reports') %></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link <%= title === 'Our Work' ? 'active' : '' %>" href="/our-work"><%= t('Our Work') %></a>
+                        <a class="nav-link <%= title === 'Blogs' ? 'active' : '' %>" href="/blogs"><%= t('Blogs') %></a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <%= title === 'Create Blog' ? 'active' : '' %>" href="/create-blog"><%= t('Create Blog') %></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link <%= title === 'Blogs' ? 'active' : '' %>" href="/blogs"><%= t('Blogs') %></a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link <%= title === 'Donate' ? 'active' : '' %>" href="/donate"><%= t('Donate') %></a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/login"><%= t('Admin Login') %></a>
-                    </li>
-                    <% if (typeof subscriberEmail !== 'undefined' && subscriberEmail) { %>
-                    <li class="nav-item">
-                        <button class="btn btn-outline-light btn-sm mt-2 mt-lg-0 w-100" id="unsubscribeBtn" data-email="<%= subscriberEmail %>"><%= t('Unsubscribe') %></button>
-                    </li>
-                    <% } %>
                     <li class="nav-item d-flex align-items-center ms-lg-2 mt-2 mt-lg-0">
                         <select class="form-select form-select-sm lang-selector" id="languageSelector">
                             <option value="en" <%= language === 'en' ? 'selected' : '' %>>English</option>
@@ -61,6 +53,30 @@
                             <i class="fas fa-moon" id="themeIcon"></i>
                         </button>
                     </li>
+                    <% if (typeof userId !== 'undefined' && userId) { %>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user-circle"></i> <%= userName || t('User') %>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <% if (userRole === 'user') { %>
+                                    <li><a class="dropdown-item" href="/auth/profile"><i class="fas fa-user-edit"></i> <%= t('My Profile') %></a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <% if (typeof subscriberEmail !== 'undefined' && subscriberEmail) { %>
+                                        <li><a class="dropdown-item" href="#" id="unsubscribeBtn"><i class="fas fa-bell-slash"></i> <%= t('Unsubscribe') %></a></li>
+                                    <% } else { %>
+                                        <li><a class="dropdown-item" href="#" id="subscribeBtn"><i class="fas fa-bell"></i> <%= t('Subscribe') %></a></li>
+                                    <% } %>
+                                    <li><hr class="dropdown-divider"></li>
+                                <% } %>
+                                <li><a class="dropdown-item" href="/auth/logout"><i class="fas fa-sign-out-alt"></i> <%= t('Logout') %></a></li>
+                            </ul>
+                        </li>
+                    <% } else { %>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/auth/login"><%= t('Login') %></a>
+                        </li>
+                    <% } %>
                 </ul>
             </div>
         </div>

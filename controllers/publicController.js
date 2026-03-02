@@ -10,6 +10,9 @@ const crypto = require('crypto');
 const publicController = {
   // Home page
   getHome: (req, res) => {
+    if (!req.session.userId) {
+      return res.redirect('/auth/login');
+    }
     res.render('public/home', { title: 'Garbage Reporting System' });
   },
 
@@ -35,7 +38,8 @@ const publicController = {
           public_id: result.public_id
         },
         location: { area, landmark, city, pincode },
-        description
+        description,
+        reportedBy: req.session.name || 'Anonymous'
       });
 
       await report.save();
@@ -50,7 +54,15 @@ const publicController = {
   // View all reports (public)
   getReports: async (req, res) => {
     try {
-      const reports = await GarbageReport.find().sort({ createdAt: -1 });
+      const filter = req.query.filter || 'all';
+      const userName = req.session.name;
+      
+      let query = {};
+      if (filter === 'mine' && userName) {
+        query = { reportedBy: userName };
+      }
+      
+      const reports = await GarbageReport.find(query).sort({ createdAt: -1 });
       const language = req.session.language || 'en';
       
       if (language === 'mr') {
@@ -65,6 +77,7 @@ const publicController = {
       res.render('public/reports', { 
         title: 'View Reports', 
         reports,
+        filter,
         success: req.session.reportSuccess
       });
       delete req.session.reportSuccess;
@@ -95,9 +108,13 @@ const publicController = {
   // Submit blog
   submitBlog: async (req, res) => {
     try {
-      const { title, author, description } = req.body;
+      const { title, description } = req.body;
       
-      const blogData = { title, author, description };
+      const blogData = { 
+        title, 
+        author: req.session.name || 'Anonymous',
+        description 
+      };
       
       if (req.file) {
         const result = await uploadToCloudinary(req.file.buffer);
@@ -120,7 +137,15 @@ const publicController = {
   // View all blogs
   getBlogs: async (req, res) => {
     try {
-      const blogs = await Blog.find().sort({ createdAt: -1 });
+      const filter = req.query.filter || 'all';
+      const userName = req.session.name;
+      
+      let query = {};
+      if (filter === 'mine' && userName) {
+        query = { author: userName };
+      }
+      
+      const blogs = await Blog.find(query).sort({ createdAt: -1 });
       const language = req.session.language || 'en';
       
       if (language === 'mr') {
@@ -134,6 +159,7 @@ const publicController = {
       res.render('public/blogs', { 
         title: 'Blogs', 
         blogs,
+        filter,
         success: req.session.blogSuccess
       });
       delete req.session.blogSuccess;
@@ -179,6 +205,43 @@ const publicController = {
     }
   },
 
+  // Subscribe from profile (auto-fetch email)
+  subscribeFromProfile: async (req, res) => {
+    try {
+      if (!req.session.userId || req.session.userId === 'admin') {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const User = require('../models/User');
+      const user = await User.findById(req.session.userId);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      const email = user.email;
+      const existingSubscriber = await Newsletter.findOne({ email });
+      
+      if (existingSubscriber) {
+        if (existingSubscriber.confirmed) {
+          return res.status(400).json({ error: 'Already subscribed' });
+        }
+        await sendConfirmationEmail(email, existingSubscriber.token);
+        return res.json({ success: true, message: 'Confirmation email sent!' });
+      }
+
+      const token = crypto.randomBytes(32).toString('hex');
+      const subscriber = new Newsletter({ email, token });
+      await subscriber.save();
+      
+      await sendConfirmationEmail(email, token);
+      
+      res.json({ success: true, message: 'Confirmation email sent!' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Subscribe failed' });
+    }
+  },
+
   confirmSubscription: async (req, res) => {
     try {
       const { token } = req.query;
@@ -197,6 +260,11 @@ const publicController = {
       await subscriber.save();
       
       req.session.subscriberEmail = subscriber.email;
+      
+      // Update User model if logged in
+      if (req.session.userId && req.session.userId !== 'admin') {
+        await require('../models/User').findByIdAndUpdate(req.session.userId, { subscriberEmail: subscriber.email });
+      }
       
       await sendWelcomeEmail(subscriber.email, subscriber.token);
       
@@ -241,6 +309,11 @@ const publicController = {
       
       req.session.subscriberEmail = null;
       
+      // Update User model if logged in
+      if (req.session.userId && req.session.userId !== 'admin') {
+        await require('../models/User').findByIdAndUpdate(req.session.userId, { subscriberEmail: null });
+      }
+      
       res.redirect('/?unsubscribed=1');
     } catch (error) {
       console.error(error);
@@ -263,6 +336,11 @@ const publicController = {
       
       req.session.subscriberEmail = null;
       
+      // Update User model if logged in
+      if (req.session.userId && req.session.userId !== 'admin') {
+        await require('../models/User').findByIdAndUpdate(req.session.userId, { subscriberEmail: null });
+      }
+      
       res.json({ success: true, message: 'Unsubscribed' });
     } catch (error) {
       console.error(error);
@@ -278,7 +356,7 @@ const publicController = {
       }
 
       const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-      const { amount, currency, donorName, message } = req.body;
+      const { amount, currency, message } = req.body;
 
       if (!amount || amount <= 0) {
         return res.status(400).json({ error: 'Invalid amount' });
@@ -306,7 +384,8 @@ const publicController = {
       const donation = new Donation({
         amount,
         currency,
-        donorName,
+        donorName: req.session.name || 'Anonymous',
+        userId: req.session.userId,
         message,
         stripeSessionId: session.id,
         status: 'pending'

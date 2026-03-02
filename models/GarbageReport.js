@@ -16,6 +16,7 @@ const garbageReportSchema = new mongoose.Schema({
     pincode: { type: String, required: true }
   },
   description: { type: String, required: true },
+  reportedBy: { type: String },
   status: {
     type: String,
     enum: ['Pending', 'Assigned', 'Cleaned'],

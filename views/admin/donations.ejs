@@ -1,7 +1,17 @@
 <%- include('../partials/admin-header') %>
 
 <div class="container my-5">
-    <h2>Donations</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Donations</h2>
+        <div>
+            <input type="date" id="startDate" class="form-control d-inline-block" style="width: auto;">
+            <span class="mx-2">to</span>
+            <input type="date" id="endDate" class="form-control d-inline-block" style="width: auto;">
+            <button class="btn btn-primary ms-2" onclick="downloadReport()">
+                <i class="fas fa-download"></i> Download Report
+            </button>
+        </div>
+    </div>
     
     <% if (success) { %>
         <div class="alert alert-success" data-auto-hide="true">✓ Deleted!</div>
@@ -103,5 +113,19 @@
         </div>
     </div>
 </div>
+
+<script>
+function downloadReport() {
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    
+    if (!startDate || !endDate) {
+        alert('Please select both start and end dates');
+        return;
+    }
+    
+    window.location.href = `/admin/donations/download?startDate=${startDate}&endDate=${endDate}`;
+}
+</script>
 
 <%- include('../partials/footer') %>

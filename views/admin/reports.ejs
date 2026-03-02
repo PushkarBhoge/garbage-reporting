@@ -1,7 +1,23 @@
 <%- include('../partials/admin-header') %>
 
 <div class="container my-5">
-    <h2>Manage Reports</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Manage Reports</h2>
+        <div>
+            <input type="date" id="startDate" class="form-control d-inline-block" style="width: auto;">
+            <span class="mx-2">to</span>
+            <input type="date" id="endDate" class="form-control d-inline-block" style="width: auto;">
+            <select id="statusFilter" class="form-select d-inline-block ms-2" style="width: auto;">
+                <option value="all">All Status</option>
+                <option value="Pending">Pending</option>
+                <option value="Assigned">Assigned</option>
+                <option value="Cleaned">Cleaned</option>
+            </select>
+            <button class="btn btn-primary ms-2" onclick="downloadReportsExcel()">
+                <i class="fas fa-download"></i> Download Report
+            </button>
+        </div>
+    </div>
     
     <% if (success) { %>
         <div class="alert alert-success" data-auto-hide="true">✓ Updated!</div>
@@ -168,6 +184,21 @@ function previewImage(inputId) {
         };
         reader.readAsDataURL(input.files[0]);
     }
+}
+</script>
+
+<script>
+function downloadReportsExcel() {
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    const status = document.getElementById('statusFilter').value;
+    
+    if (!startDate || !endDate) {
+        alert('Please select both start and end dates');
+        return;
+    }
+    
+    window.location.href = `/admin/reports/download?startDate=${startDate}&endDate=${endDate}&status=${status}`;
 }
 </script>
 

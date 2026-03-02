@@ -15,5 +15,95 @@
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/js/main.js"></script>
+    
+    <script>
+    // Subscribe from profile
+    const subscribeBtn = document.getElementById('subscribeBtn');
+    if (subscribeBtn) {
+        subscribeBtn.addEventListener('click', async function(e) {
+            e.preventDefault();
+            try {
+                const response = await fetch('/subscribe-from-profile', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    showToast('✓ ' + data.message, 'success');
+                    setTimeout(() => location.reload(), 2000);
+                } else {
+                    showToast(data.error || 'Subscribe failed', 'error');
+                }
+            } catch (error) {
+                showToast('Error occurred', 'error');
+            }
+        });
+    }
+    
+    // Unsubscribe from profile
+    const unsubscribeBtn = document.getElementById('unsubscribeBtn');
+    if (unsubscribeBtn) {
+        unsubscribeBtn.addEventListener('click', async function(e) {
+            e.preventDefault();
+            
+            const email = '<%= typeof subscriberEmail !== "undefined" ? subscriberEmail : "" %>';
+            if (!email) {
+                showToast('Email not found', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/unsubscribe-by-email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    showToast('✓ Unsubscribed successfully!', 'success');
+                    setTimeout(() => location.reload(), 2000);
+                } else {
+                    showToast(data.error || 'Unsubscribe failed', 'error');
+                }
+            } catch (error) {
+                showToast('Error occurred', 'error');
+            }
+        });
+    }
+    
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background: ${type === 'success' ? '#28a745' : '#dc3545'};
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 9999;
+            animation: slideIn 0.3s ease-out;
+        `;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.style.animation = 'slideOut 0.3s ease-out';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+    </script>
+    
+    <style>
+    @keyframes slideIn {
+        from { transform: translateX(400px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(400px); opacity: 0; }
+    }
+    </style>
 </body>
 </html>

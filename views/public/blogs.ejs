@@ -1,7 +1,18 @@
 <%- include('../partials/header') %>
 
 <div class="container my-5">
-    <h2><%= t('Blogs') %></h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><%= t('Blogs') %></h2>
+        <div class="btn-group" role="group">
+            <a href="/blogs?filter=all" class="btn <%= filter === 'all' ? 'btn-success' : 'btn-outline-success' %>">
+                <i class="fas fa-globe"></i> <%= t('All Blogs') %>
+            </a>
+            <a href="/blogs?filter=mine" class="btn <%= filter === 'mine' ? 'btn-success' : 'btn-outline-success' %>">
+                <i class="fas fa-user"></i> <%= t('My Blogs') %>
+            </a>
+        </div>
+    </div>
+    
     <% if (success) { %>
         <div class="alert alert-success alert-dismissible fade show" role="alert" data-auto-hide="true">
             <%= t('✓ Blog published!') %>

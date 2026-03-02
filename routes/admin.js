@@ -23,8 +23,7 @@ router.post('/teams/:teamId/workers', requireAdmin, adminController.addWorker);
 router.delete('/teams/:teamId/workers/:workerId', requireAdmin, adminController.removeWorker);
 
 // Report download routes
-router.get('/reports-download', requireAdmin, adminController.getReportsPage);
-router.get('/download-report', requireAdmin, adminController.downloadReport);
+router.get('/reports/download', requireAdmin, adminController.downloadReportsExcel);
 
 // Blog management routes
 router.get('/blogs', requireAdmin, adminController.getBlogs);
@@ -37,5 +36,6 @@ router.delete('/subscribers/:subscriberId', requireAdmin, adminController.delete
 // Donations management routes
 router.get('/donations', requireAdmin, adminController.getDonations);
 router.delete('/donations/:donationId', requireAdmin, adminController.deleteDonation);
+router.get('/donations/download', requireAdmin, adminController.downloadDonationReport);
 
 module.exports = router;

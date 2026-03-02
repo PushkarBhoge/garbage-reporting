@@ -16,6 +16,7 @@ router.get('/create-blog', publicController.getCreateBlog);
 router.post('/create-blog', upload.single('image'), publicController.submitBlog);
 router.get('/blogs', publicController.getBlogs);
 router.post('/subscribe', publicController.subscribeNewsletter);
+router.post('/subscribe-from-profile', publicController.subscribeFromProfile);
 router.get('/confirm-subscription', publicController.confirmSubscription);
 router.get('/renew-subscription', publicController.renewSubscription);
 router.get('/unsubscribe', publicController.unsubscribe);

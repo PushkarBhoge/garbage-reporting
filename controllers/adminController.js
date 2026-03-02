@@ -6,41 +6,33 @@ const Donation = require('../models/Donation');
 const { uploadToCloudinary } = require('../config/cloudinary');
 
 const adminController = {
-  // Admin login page
+  // Admin login page (redirect to unified auth)
   getLogin: (req, res) => {
-    if (req.session.isAdmin) {
-      return res.redirect('/admin/dashboard');
-    }
-    res.render('admin/login', { title: 'Admin Login', error: req.query.error });
+    res.redirect('/auth/login');
   },
 
-  // Admin login
+  // Admin login (redirect to unified auth)
   postLogin: (req, res) => {
-    const { email, password } = req.body;
-    
-    if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
-      req.session.isAdmin = true;
-      res.redirect('/admin/dashboard');
-    } else {
-      res.redirect('/admin/login?error=1');
-    }
+    res.redirect('/auth/login');
   },
 
   // Admin logout
   logout: (req, res) => {
     req.session.destroy();
-    res.redirect('/');
+    res.redirect('/auth/login');
   },
 
   // Admin dashboard
   getDashboard: async (req, res) => {
     try {
+      const User = require('../models/User');
       const totalReports = await GarbageReport.countDocuments();
       const pendingReports = await GarbageReport.countDocuments({ status: 'Pending' });
       const assignedReports = await GarbageReport.countDocuments({ status: 'Assigned' });
       const cleanedReports = await GarbageReport.countDocuments({ status: 'Cleaned' });
       const totalTeams = await Team.countDocuments();
       const totalBlogs = await Blog.countDocuments();
+      const totalUsers = await User.countDocuments();
       const totalSubscribers = await Newsletter.countDocuments({ status: 'active' });
       
       const donations = await Donation.find({ status: 'completed' });
@@ -102,7 +94,7 @@ const adminController = {
 
       res.render('admin/dashboard', {
         title: 'Admin Dashboard',
-        stats: { totalReports, pendingReports, assignedReports, cleanedReports, totalTeams, totalBlogs, totalSubscribers, totalDonations, donationCount },
+        stats: { totalReports, pendingReports, assignedReports, cleanedReports, totalTeams, totalBlogs, totalUsers, totalSubscribers, totalDonations, donationCount },
         chartData: {
           monthlyLabels: Object.keys(monthlyData),
           monthlyValues: Object.values(monthlyData),
@@ -253,78 +245,6 @@ const adminController = {
     }
   },
 
-  // Get reports page
-  getReportsPage: async (req, res) => {
-    try {
-      res.render('admin/reports-download', { title: 'Download Reports' });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Load failed' });
-    }
-  },
-
-  // Download report
-  downloadReport: async (req, res) => {
-    try {
-      const { period, year, month, day } = req.query;
-      let startDate, endDate;
-      
-      if (period === 'day' && year && month && day) {
-        startDate = new Date(year, month - 1, day);
-        endDate = new Date(year, month - 1, day, 23, 59, 59);
-      } else if (period === 'month' && year && month) {
-        startDate = new Date(year, month - 1, 1);
-        endDate = new Date(year, month, 0, 23, 59, 59);
-      } else if (period === 'year' && year) {
-        startDate = new Date(year, 0, 1);
-        endDate = new Date(year, 11, 31, 23, 59, 59);
-      } else {
-        return res.status(400).json({ error: 'Invalid params' });
-      }
-      
-      const reports = await GarbageReport.find({
-        status: 'Cleaned',
-        cleanedAt: { $gte: startDate, $lte: endDate }
-      }).populate('assignedTeam');
-      
-      const ExcelJS = require('exceljs');
-      const workbook = new ExcelJS.Workbook();
-      const worksheet = workbook.addWorksheet('Cleaning Report');
-      
-      worksheet.columns = [
-        { header: 'Date Cleaned', key: 'cleanedAt', width: 15 },
-        { header: 'Location', key: 'location', width: 30 },
-        { header: 'Description', key: 'description', width: 40 },
-        { header: 'Team Name', key: 'teamName', width: 20 },
-        { header: 'Team Members', key: 'teamMembers', width: 50 },
-        { header: 'Admin Remarks', key: 'adminRemarks', width: 30 }
-      ];
-      
-      reports.forEach(report => {
-        const teamMembers = report.assignedTeam ? 
-          report.assignedTeam.workers.map(w => w.name).join(', ') : 'N/A';
-        
-        worksheet.addRow({
-          cleanedAt: report.cleanedAt ? new Date(report.cleanedAt).toLocaleDateString() : 'N/A',
-          location: `${report.location.area}, ${report.location.landmark}, ${report.location.city} - ${report.location.pincode}`,
-          description: report.description,
-          teamName: report.assignedTeam ? report.assignedTeam.name : 'N/A',
-          teamMembers: teamMembers,
-          adminRemarks: report.adminRemarks || 'N/A'
-        });
-      });
-      
-      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-      res.setHeader('Content-Disposition', `attachment; filename=cleaning-report-${period}-${year}${month ? '-' + month : ''}${day ? '-' + day : ''}.xlsx`);
-      
-      await workbook.xlsx.write(res);
-      res.end();
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Generate failed' });
-    }
-  },
-
   // Blogs management
   getBlogs: async (req, res) => {
     try {
@@ -354,13 +274,26 @@ const adminController = {
     }
   },
 
-  // Newsletter subscribers management
+  // Users management (renamed from subscribers)
   getSubscribers: async (req, res) => {
     try {
-      const subscribers = await Newsletter.find().sort({ subscribedAt: -1 });
+      const User = require('../models/User');
+      const users = await User.find().sort({ createdAt: -1 });
+      const Newsletter = require('../models/Newsletter');
+      
+      // Get subscription status for each user
+      const usersWithSubscription = await Promise.all(users.map(async (user) => {
+        const subscription = user.subscriberEmail ? 
+          await Newsletter.findOne({ email: user.subscriberEmail, status: 'active' }) : null;
+        return {
+          ...user.toObject(),
+          isSubscribed: !!subscription
+        };
+      }));
+      
       res.render('admin/subscribers', { 
-        title: 'Newsletter Subscribers', 
-        subscribers,
+        title: 'Manage Users', 
+        users: usersWithSubscription,
         success: req.session.subscriberSuccess
       });
       delete req.session.subscriberSuccess;
@@ -370,11 +303,12 @@ const adminController = {
     }
   },
 
-  // Delete subscriber
+  // Delete user
   deleteSubscriber: async (req, res) => {
     try {
       const { subscriberId } = req.params;
-      await Newsletter.findByIdAndDelete(subscriberId);
+      const User = require('../models/User');
+      await User.findByIdAndDelete(subscriberId);
       req.session.subscriberSuccess = true;
       res.redirect('/admin/subscribers');
     } catch (error) {
@@ -409,6 +343,119 @@ const adminController = {
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Delete failed' });
+    }
+  },
+
+  // Download donation report
+  downloadDonationReport: async (req, res) => {
+    try {
+      const { startDate, endDate } = req.query;
+      
+      if (!startDate || !endDate) {
+        return res.status(400).json({ error: 'Start and end dates required' });
+      }
+      
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      end.setHours(23, 59, 59);
+      
+      const donations = await Donation.find({
+        status: 'completed',
+        createdAt: { $gte: start, $lte: end }
+      }).sort({ createdAt: -1 });
+      
+      const ExcelJS = require('exceljs');
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet('Donation Report');
+      
+      worksheet.columns = [
+        { header: 'Date', key: 'date', width: 15 },
+        { header: 'Donor Name', key: 'donorName', width: 25 },
+        { header: 'Amount', key: 'amount', width: 15 },
+        { header: 'Currency', key: 'currency', width: 12 },
+        { header: 'Amount (INR)', key: 'amountINR', width: 15 },
+        { header: 'Message', key: 'message', width: 40 }
+      ];
+      
+      donations.forEach(donation => {
+        const rate = donation.currency === 'INR' ? 1 : donation.currency === 'USD' ? 83 : donation.currency === 'EUR' ? 90 : 12;
+        const inrAmount = donation.amount * rate;
+        
+        worksheet.addRow({
+          date: new Date(donation.createdAt).toLocaleDateString(),
+          donorName: donation.donorName || 'Anonymous',
+          amount: donation.amount.toFixed(2),
+          currency: donation.currency,
+          amountINR: Math.round(inrAmount),
+          message: donation.message || '-'
+        });
+      });
+      
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', `attachment; filename=donation-report-${startDate}-to-${endDate}.xlsx`);
+      
+      await workbook.xlsx.write(res);
+      res.end();
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Generate failed' });
+    }
+  },
+
+  // Download reports Excel
+  downloadReportsExcel: async (req, res) => {
+    try {
+      const { startDate, endDate, status } = req.query;
+      
+      if (!startDate || !endDate) {
+        return res.status(400).json({ error: 'Start and end dates required' });
+      }
+      
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      end.setHours(23, 59, 59);
+      
+      const query = { createdAt: { $gte: start, $lte: end } };
+      if (status && status !== 'all') {
+        query.status = status;
+      }
+      
+      const reports = await GarbageReport.find(query).populate('assignedTeam').sort({ createdAt: -1 });
+      
+      const ExcelJS = require('exceljs');
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet('Reports');
+      
+      worksheet.columns = [
+        { header: 'Date', key: 'date', width: 15 },
+        { header: 'Reported By', key: 'reportedBy', width: 20 },
+        { header: 'Location', key: 'location', width: 40 },
+        { header: 'Description', key: 'description', width: 40 },
+        { header: 'Status', key: 'status', width: 12 },
+        { header: 'Assigned Team', key: 'team', width: 20 },
+        { header: 'Cleaned Date', key: 'cleanedDate', width: 15 }
+      ];
+      
+      reports.forEach(report => {
+        worksheet.addRow({
+          date: new Date(report.createdAt).toLocaleDateString(),
+          reportedBy: report.reportedBy || 'Anonymous',
+          location: `${report.location.area}, ${report.location.landmark}, ${report.location.city} - ${report.location.pincode}`,
+          description: report.description,
+          status: report.status,
+          team: report.assignedTeam ? report.assignedTeam.name : 'Not Assigned',
+          cleanedDate: report.cleanedAt ? new Date(report.cleanedAt).toLocaleDateString() : '-'
+        });
+      });
+      
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', `attachment; filename=reports-${startDate}-to-${endDate}.xlsx`);
+      
+      await workbook.xlsx.write(res);
+      res.end();
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Generate failed' });
     }
   }
 };

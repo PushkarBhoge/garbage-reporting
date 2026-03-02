@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swachh Sena</title>
+    <link rel="icon" href="/assets/logo-eng.png" type="image/png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/auth.css">
+</head>
+<body class="auth-page">
+    <div class="container">
+        <div class="row justify-content-center align-items-center min-vh-100">
+            <div class="col-md-10 col-lg-8 auth-container">
+                <div class="card auth-card">
+                    <div class="row g-0">
+                        <div class="col-md-5 logo-section">
+                            <img src="/assets/logo-eng.png" alt="Swachh Sena Logo">
+                            <h2>Swachh Sena</h2>
+                            <p>Keep Your City Clean</p>
+                            <div class="mt-4">
+                                <i class="fas fa-recycle fa-3x mb-3"></i>
+                                <p class="small">Join us in making our community cleaner and greener</p>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="card-body p-5">
+                                <% if (error) { %>
+                                    <div class="alert alert-danger auth-alert"><i class="fas fa-exclamation-circle"></i> <%= error %></div>
+                                <% } %>
+                                <% if (success) { %>
+                                    <div class="alert alert-success auth-alert"><i class="fas fa-check-circle"></i> <%= success %></div>
+                                <% } %>
+
+                                <ul class="nav nav-tabs auth-tabs" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button">Login</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="signup-tab" data-bs-toggle="tab" data-bs-target="#signup" type="button">Signup</button>
+                                    </li>
+                                </ul>
+
+                                <div class="tab-content">
+                                    <div class="tab-pane fade show active" id="login" role="tabpanel">
+                                        <form action="/auth/login" method="POST">
+                                            <div class="mb-3">
+                                                <label class="form-label"><i class="fas fa-envelope"></i> Email</label>
+                                                <input type="email" name="email" class="form-control auth-form-control" placeholder="Enter your email" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label"><i class="fas fa-lock"></i> Password</label>
+                                                <input type="password" name="password" class="form-control auth-form-control" placeholder="Enter your password" required>
+                                            </div>
+                                            <button type="submit" class="btn btn-success auth-btn w-100">Login</button>
+                                        </form>
+                                    </div>
+
+                                    <div class="tab-pane fade" id="signup" role="tabpanel">
+                                        <form action="/auth/signup" method="POST">
+                                            <div class="mb-3">
+                                                <label class="form-label"><i class="fas fa-user"></i> Name</label>
+                                                <input type="text" name="name" class="form-control auth-form-control" placeholder="Enter your name" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label"><i class="fas fa-envelope"></i> Email</label>
+                                                <input type="email" name="email" class="form-control auth-form-control" placeholder="Enter your email" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label"><i class="fas fa-lock"></i> Password</label>
+                                                <input type="password" name="password" class="form-control auth-form-control" placeholder="Minimum 6 characters" minlength="6" required>
+                                            </div>
+                                            <button type="submit" class="btn btn-success auth-btn w-100">Signup</button>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <div class="text-center mt-4">
+                                    <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
